@@ -6,3 +6,4 @@ artifacts/cache/
 data/**/repos/
 *.pyc
 data/swebench_lite/raw/
+.claude/settings.local.json

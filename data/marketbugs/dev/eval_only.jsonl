@@ -1,0 +1,120 @@
+{"id": "mb-cachetools-0000", "path": "src/cachetools/__init__.py", "old": "default", "new": "key"}
+{"id": "mb-cachetools-0001", "path": "src/cachetools/__init__.py", "old": "self, key", "new": "key, self"}
+{"id": "mb-cachetools-0002", "path": "src/cachetools/_cached.py", "old": "cache", "new": "wrapper"}
+{"id": "mb-cachetools-0003", "path": "src/cachetools/__init__.py", "old": "self", "new": "size"}
+{"id": "mb-cachetools-0004", "path": "src/cachetools/__init__.py", "old": "value = Cache.__getitem__(self, key)", "new": "pass"}
+{"id": "mb-cachetools-0005", "path": "src/cachetools/_decorator.py", "old": "lock", "new": "result"}
+{"id": "mb-cachetools-0006", "path": "src/cachetools/_descriptor.py", "old": "args", "new": "obj"}
+{"id": "mb-cachetools-0007", "path": "src/cachetools/func.py", "old": "_cache(_UnboundTTLCache(ttl, timer), None, typed)", "new": "None"}
+{"id": "mb-cachetools-0008", "path": "src/cachetools/__init__.py", "old": "items", "new": "key"}
+{"id": "mb-cachetools-0009", "path": "src/cachetools/__init__.py", "old": "self, key", "new": "key, self"}
+{"id": "mb-cachetools-0010", "path": "src/cachetools/_decorator.py", "old": "1", "new": "0"}
+{"id": "mb-cachetools-0011", "path": "src/cachetools/__init__.py", "old": "maxsize", "new": "self"}
+{"id": "mb-cachetools-0012", "path": "src/cachetools/__init__.py", "old": "next", "new": "curr"}
+{"id": "mb-cachetools-0013", "path": "src/cachetools/func.py", "old": "128", "new": "129"}
+{"id": "mb-cachetools-0014", "path": "src/cachetools/_decorator.py", "old": "lock", "new": "val"}
+{"id": "mb-cachetools-0015", "path": "src/cachetools/__init__.py", "old": "self", "new": "time"}
+{"id": "mb-cachetools-0016", "path": "src/cachetools/__init__.py", "old": "item", "new": "key"}
+{"id": "mb-cachetools-0017", "path": "src/cachetools/_descriptor.py", "old": "obj", "new": "msg"}
+{"id": "mb-cachetools-0018", "path": "src/cachetools/__init__.py", "old": "item", "new": "expired"}
+{"id": "mb-cachetools-0019", "path": "src/cachetools/func.py", "old": "128", "new": "127"}
+{"id": "mb-cachetools-0020", "path": "src/cachetools/__init__.py", "old": " and ", "new": " or "}
+{"id": "mb-cachetools-0021", "path": "src/cachetools/__init__.py", "old": "(key, value)", "new": "None"}
+{"id": "mb-cachetools-0022", "path": "src/cachetools/__init__.py", "old": "self", "new": "key"}
+{"id": "mb-cachetools-0023", "path": "src/cachetools/_decorator.py", "old": "val", "new": "key"}
+{"id": "mb-cachetools-0024", "path": "src/cachetools/func.py", "old": "LFUCache(128), 128", "new": "128, LFUCache(128)"}
+{"id": "mb-cachetools-0025", "path": "src/cachetools/__init__.py", "old": "self.__keys[index] = last", "new": "pass"}
+{"id": "mb-cachetools-0026", "path": "src/cachetools/__init__.py", "old": "self", "new": "items"}
+{"id": "mb-cachetools-0027", "path": "src/cachetools/_decorator.py", "old": "self.__hits = self.__misses = 0", "new": "pass"}
+{"id": "mb-cachetools-0028", "path": "src/cachetools/__init__.py", "old": "key", "new": "self"}
+{"id": "mb-cachetools-0029", "path": "src/cachetools/__init__.py", "old": "self", "new": "key"}
+{"id": "mb-cachetools-0030", "path": "src/cachetools/__init__.py", "old": "key not in data", "new": "True"}
+{"id": "mb-cachetools-0031", "path": "src/cachetools/__init__.py", "old": "self", "new": "maxsize"}
+{"id": "mb-cachetools-0032", "path": "src/cachetools/__init__.py", "old": "itemsize", "new": "key"}
+{"id": "mb-cachetools-0033", "path": "src/cachetools/__init__.py", "old": "self", "new": "cache_setitem"}
+{"id": "mb-cachetools-0034", "path": "src/cachetools/_descriptor.py", "old": "descriptor is self", "new": "True"}
+{"id": "mb-cachetools-0035", "path": "src/cachetools/__init__.py", "old": "not order or (not order[0].removed and time < order[0].expires)", "new": "True"}
+{"id": "mb-cachetools-0036", "path": "src/cachetools/__init__.py", "old": "self.timer() < item.expires", "new": "True"}
+{"id": "mb-cachetools-0037", "path": "src/cachetools/__init__.py", "old": "key", "new": "keys"}
+{"id": "mb-cachetools-0038", "path": "src/cachetools/_descriptor.py", "old": "self.__owner = owner", "new": "pass"}
+{"id": "mb-cachetools-0039", "path": "src/cachetools/__init__.py", "old": "key", "new": "cache_delitem"}
+{"id": "mb-sortedcontainers-0000", "path": "src/sortedcontainers/sorteddict.py", "old": "args", "new": "self"}
+{"id": "mb-sortedcontainers-0001", "path": "src/sortedcontainers/sortedlist.py", "old": "pos, idx", "new": "idx, pos"}
+{"id": "mb-sortedcontainers-0002", "path": "src/sortedcontainers/sorteddict.py", "old": "self", "new": "value"}
+{"id": "mb-sortedcontainers-0003", "path": "src/sortedcontainers/sortedlist.py", "old": "child + 1 == len(self._index)", "new": "True"}
+{"id": "mb-sortedcontainers-0004", "path": "src/sortedcontainers/sortedlist.py", "old": "values", "new": "sublist"}
+{"id": "mb-sortedcontainers-0005", "path": "src/sortedcontainers/sortedlist.py", "old": "1", "new": "2"}
+{"id": "mb-sortedcontainers-0006", "path": "src/sortedcontainers/sortedlist.py", "old": "idx", "new": "_lists"}
+{"id": "mb-sortedcontainers-0007", "path": "src/sortedcontainers/sortedset.py", "old": "sorted_set._set = values", "new": "pass"}
+{"id": "mb-sortedcontainers-0008", "path": "src/sortedcontainers/sortedlist.py", "old": "self", "new": "start"}
+{"id": "mb-sortedcontainers-0009", "path": "src/sortedcontainers/sortedlist.py", "old": "value", "new": "_maxes"}
+{"id": "mb-sortedcontainers-0010", "path": "src/sortedcontainers/sortedlist.py", "old": "head", "new": "row"}
+{"id": "mb-sortedcontainers-0011", "path": "src/sortedcontainers/sortedlist.py", "old": "+", "new": "-"}
+{"id": "mb-sortedcontainers-0012", "path": "src/sortedcontainers/sortedlist.py", "old": "min_pos", "new": "sublists"}
+{"id": "mb-sortedcontainers-0013", "path": "src/sortedcontainers/sortedset.py", "old": "index", "new": "_list"}
+{"id": "mb-sortedcontainers-0014", "path": "src/sortedcontainers/sortedset.py", "old": "sorted_set", "new": "None"}
+{"id": "mb-sortedcontainers-0015", "path": "src/sortedcontainers/sortedlist.py", "old": "min_pos", "new": "next_pos"}
+{"id": "mb-sortedcontainers-0016", "path": "src/sortedcontainers/sortedlist.py", "old": "iterable", "new": "self"}
+{"id": "mb-sortedcontainers-0017", "path": "src/sortedcontainers/sortedlist.py", "old": "pos == len(_maxes)", "new": "True"}
+{"id": "mb-sortedcontainers-0018", "path": "src/sortedcontainers/sortedset.py", "old": "_set.remove(value)", "new": "pass"}
+{"id": "mb-sortedcontainers-0019", "path": "src/sortedcontainers/sortedlist.py", "old": "*", "new": "//"}
+{"id": "mb-sortedcontainers-0020", "path": "src/sortedcontainers/sortedlist.py", "old": "start", "new": "values"}
+{"id": "mb-sortedcontainers-0021", "path": "src/sortedcontainers/sortedlist.py", "old": "==", "new": "!="}
+{"id": "mb-sortedcontainers-0022", "path": "src/sortedcontainers/sortedset.py", "old": "self._set.clear()", "new": "pass"}
+{"id": "mb-sortedcontainers-0023", "path": "src/sortedcontainers/sortedlist.py", "old": "pos == len(_maxes)", "new": "True"}
+{"id": "mb-sortedcontainers-0024", "path": "src/sortedcontainers/sortedlist.py", "old": "_keys", "new": "keys_pos"}
+{"id": "mb-sortedcontainers-0025", "path": "src/sortedcontainers/sortedlist.py", "old": "_load", "new": "_index"}
+{"id": "mb-sortedcontainers-0026", "path": "src/sortedcontainers/sortedlist.py", "old": "row = list(starmap(add, zip(head, tail)))", "new": "pass"}
+{"id": "mb-sortedcontainers-0027", "path": "src/sortedcontainers/sortedlist.py", "old": "_lists", "new": "self"}
+{"id": "mb-sortedcontainers-0028", "path": "src/sortedcontainers/sortedlist.py", "old": "_maxes", "new": "idx"}
+{"id": "mb-sortedcontainers-0029", "path": "src/sortedcontainers/sortedlist.py", "old": "<", "new": "<="}
+{"id": "mb-sortedcontainers-0030", "path": "src/sortedcontainers/sortedlist.py", "old": "prefix", "new": "indices"}
+{"id": "mb-sortedcontainers-0031", "path": "src/sortedcontainers/sortedlist.py", "old": "key", "new": "_lists"}
+{"id": "mb-sortedcontainers-0032", "path": "src/sortedcontainers/sortedlist.py", "old": "pos", "new": "_index"}
+{"id": "mb-sortedcontainers-0033", "path": "src/sortedcontainers/sortedlist.py", "old": "self", "new": "value"}
+{"id": "mb-sortedcontainers-0034", "path": "src/sortedcontainers/sorteddict.py", "old": "self, pairs", "new": "pairs, self"}
+{"id": "mb-sortedcontainers-0035", "path": "src/sortedcontainers/sortedset.py", "old": "self", "new": "other"}
+{"id": "mb-sortedcontainers-0036", "path": "src/sortedcontainers/sortedlist.py", "old": "stop", "new": "index"}
+{"id": "mb-sortedcontainers-0037", "path": "src/sortedcontainers/sortedlist.py", "old": "min_key", "new": "min_idx"}
+{"id": "mb-sortedcontainers-0038", "path": "src/sortedcontainers/sortedlist.py", "old": "row0", "new": "row1"}
+{"id": "mb-sortedcontainers-0039", "path": "src/sortedcontainers/sortedlist.py", "old": "values", "new": "num"}
+{"id": "mb-intervaltree-0000", "path": "intervaltree/intervaltree.py", "old": "begin", "new": "self"}
+{"id": "mb-intervaltree-0001", "path": "intervaltree/intervaltree.py", "old": "bound_check", "new": "iv"}
+{"id": "mb-intervaltree-0002", "path": "intervaltree/interval.py", "old": "0", "new": "1"}
+{"id": "mb-intervaltree-0003", "path": "intervaltree/intervaltree.py", "old": "ubound", "new": "bounds"}
+{"id": "mb-intervaltree-0004", "path": "intervaltree/node.py", "old": "0", "new": "1"}
+{"id": "mb-intervaltree-0005", "path": "intervaltree/interval.py", "old": "self", "new": "other"}
+{"id": "mb-intervaltree-0006", "path": "intervaltree/intervaltree.py", "old": "self", "new": "interval"}
+{"id": "mb-intervaltree-0007", "path": "intervaltree/intervaltree.py", "old": "self.is_empty()", "new": "True"}
+{"id": "mb-intervaltree-0008", "path": "intervaltree/intervaltree.py", "old": "end = interval.end", "new": "pass"}
+{"id": "mb-intervaltree-0009", "path": "intervaltree/intervaltree.py", "old": "1", "new": "2"}
+{"id": "mb-intervaltree-0010", "path": "intervaltree/intervaltree.py", "old": "0", "new": "1"}
+{"id": "mb-intervaltree-0011", "path": "intervaltree/interval.py", "old": "i1 = min(self.end, begin.end)", "new": "pass"}
+{"id": "mb-intervaltree-0012", "path": "intervaltree/intervaltree.py", "old": "self.end() - self.begin()", "new": "None"}
+{"id": "mb-intervaltree-0013", "path": "intervaltree/interval.py", "old": "<", "new": "<="}
+{"id": "mb-intervaltree-0014", "path": "intervaltree/intervaltree.py", "old": "result", "new": "iv"}
+{"id": "mb-intervaltree-0015", "path": "intervaltree/interval.py", "old": "end", "new": "i1"}
+{"id": "mb-intervaltree-0016", "path": "intervaltree/interval.py", "old": "s_begin = repr(self.begin)", "new": "pass"}
+{"id": "mb-intervaltree-0017", "path": "intervaltree/interval.py", "old": "0", "new": "1"}
+{"id": "mb-intervaltree-0018", "path": "intervaltree/node.py", "old": "self", "new": "tostring"}
+{"id": "mb-intervaltree-0019", "path": "intervaltree/intervaltree.py", "old": "interval", "new": "self"}
+{"id": "mb-intervaltree-0020", "path": "intervaltree/intervaltree.py", "old": "not self.boundary_table", "new": "True"}
+{"id": "mb-intervaltree-0021", "path": "intervaltree/intervaltree.py", "old": "1", "new": "0"}
+{"id": "mb-intervaltree-0022", "path": "intervaltree/node.py", "old": "heir", "new": "None"}
+{"id": "mb-intervaltree-0023", "path": "intervaltree/intervaltree.py", "old": "current_reduced", "new": "sorted_intervals"}
+{"id": "mb-intervaltree-0024", "path": "intervaltree/interval.py", "old": "other, 'end'", "new": "'end', other"}
+{"id": "mb-intervaltree-0025", "path": "intervaltree/intervaltree.py", "old": "iv", "new": "key"}
+{"id": "mb-intervaltree-0026", "path": "intervaltree/intervaltree.py", "old": "begin_hits", "new": "datafunc"}
+{"id": "mb-intervaltree-0027", "path": "intervaltree/intervaltree.py", "old": "bound_end = boundary_table.bisect_left(end)", "new": "pass"}
+{"id": "mb-intervaltree-0028", "path": "intervaltree/intervaltree.py", "old": "0", "new": "1"}
+{"id": "mb-intervaltree-0029", "path": "intervaltree/node.py", "old": "self", "new": "result"}
+{"id": "mb-intervaltree-0030", "path": "intervaltree/intervaltree.py", "old": "iv", "new": "end"}
+{"id": "mb-intervaltree-0031", "path": "intervaltree/intervaltree.py", "old": "self.overlap(iv.begin, iv.end)", "new": "None"}
+{"id": "mb-intervaltree-0032", "path": "intervaltree/intervaltree.py", "old": "stop", "new": "start"}
+{"id": "mb-intervaltree-0033", "path": "intervaltree/node.py", "old": "k", "new": "self"}
+{"id": "mb-intervaltree-0034", "path": "intervaltree/interval.py", "old": "self", "new": "other"}
+{"id": "mb-intervaltree-0035", "path": "intervaltree/intervaltree.py", "old": "False", "new": "True"}
+{"id": "mb-intervaltree-0036", "path": "intervaltree/interval.py", "old": "begin", "new": "end"}
+{"id": "mb-intervaltree-0037", "path": "intervaltree/node.py", "old": "parents", "new": "iv"}
+{"id": "mb-intervaltree-0038", "path": "intervaltree/node.py", "old": "interval", "new": "done"}
+{"id": "mb-intervaltree-0039", "path": "intervaltree/node.py", "old": "branch", "new": "self"}

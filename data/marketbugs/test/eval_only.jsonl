@@ -1,0 +1,210 @@
+{"id": "mb-tomli-0000", "path": "src/tomli/_parser.py", "old": "float_value", "new": "None"}
+{"id": "mb-tomli-0001", "path": "src/tomli/_parser.py", "old": "msg is not DEPRECATED_DEFAULT", "new": "True"}
+{"id": "mb-tomli-0002", "path": "src/tomli/_parser.py", "old": "f\"Found invalid character {src[pos]!r}\", src", "new": "src, f\"Found invalid character {src[pos]!r}\""}
+{"id": "mb-tomli-0003", "path": "src/tomli/_parser.py", "old": "+", "new": "-"}
+{"id": "mb-tomli-0004", "path": "src/tomli/_parser.py", "old": "lineno", "new": "msg"}
+{"id": "mb-tomli-0005", "path": "src/tomli/_parser.py", "old": "src", "new": "error_on"}
+{"id": "mb-tomli-0006", "path": "src/tomli/_parser.py", "old": "doc", "new": "coord_repr"}
+{"id": "mb-tomli-0007", "path": "src/tomli/_parser.py", "old": "__s", "new": "char"}
+{"id": "mb-tomli-0008", "path": "src/tomli/_parser.py", "old": "float_value", "new": "float_str"}
+{"id": "mb-tomli-0009", "path": "src/tomli/_parser.py", "old": "b", "new": "s"}
+{"id": "mb-tomli-0010", "path": "src/tomli/_parser.py", "old": ">", "new": ">="}
+{"id": "mb-tomli-0011", "path": "src/tomli/_parser.py", "old": "0", "new": "1"}
+{"id": "mb-tomli-0012", "path": "src/tomli/_parser.py", "old": "1", "new": "0"}
+{"id": "mb-tomli-0013", "path": "src/tomli/_parser.py", "old": "args", "new": "pos"}
+{"id": "mb-tomli-0014", "path": "src/tomli/_parser.py", "old": "0", "new": "1"}
+{"id": "mb-tomli-0015", "path": "src/tomli/_parser.py", "old": "safe_parse_float", "new": "None"}
+{"id": "mb-tomli-0016", "path": "src/tomli/_parser.py", "old": "pos is not DEPRECATED_DEFAULT", "new": "True"}
+{"id": "mb-tomli-0017", "path": "src/tomli/_parser.py", "old": "msg", "new": "colno"}
+{"id": "mb-tomli-0018", "path": "src/tomli/_parser.py", "old": "1", "new": "0"}
+{"id": "mb-tomli-0019", "path": "src/tomli/_parser.py", "old": "doc is not DEPRECATED_DEFAULT", "new": "True"}
+{"id": "mb-tomli-0020", "path": "src/tomli/_parser.py", "old": "s", "new": "parse_float"}
+{"id": "mb-tomli-0021", "path": "src/tomli/_parser.py", "old": "pos", "new": "errmsg"}
+{"id": "mb-tomli-0022", "path": "src/tomli/_parser.py", "old": "__fp", "new": "b"}
+{"id": "mb-tomli-0023", "path": "src/tomli/_parser.py", "old": "pos", "new": "lineno"}
+{"id": "mb-tomli-0024", "path": "src/tomli/_parser.py", "old": "lineno", "new": "colno"}
+{"id": "mb-tomli-0025", "path": "src/tomli/_parser.py", "old": "args", "new": "pos"}
+{"id": "mb-tomli-0026", "path": "src/tomli/_parser.py", "old": "src", "new": "header"}
+{"id": "mb-tomli-0027", "path": "src/tomli/_parser.py", "old": "self.doc = doc", "new": "pass"}
+{"id": "mb-tomli-0028", "path": "src/tomli/_parser.py", "old": "+", "new": "-"}
+{"id": "mb-tomli-0029", "path": "src/tomli/_parser.py", "old": "parse_float is float", "new": "True"}
+{"id": "mb-isodate-0000", "path": "src/isodate/isodates.py", "old": "1", "new": "0"}
+{"id": "mb-isodate-0001", "path": "src/isodate/isoduration.py", "old": "durdt", "new": "groups"}
+{"id": "mb-isodate-0002", "path": "src/isodate/isostrf.py", "old": "hours", "new": "days"}
+{"id": "mb-isodate-0003", "path": "src/isodate/isostrf.py", "old": "seconds, usecs = divmod(usecs, 1000000)", "new": "pass"}
+{"id": "mb-isodate-0004", "path": "src/isodate/isodates.py", "old": "expanded", "new": "sign"}
+{"id": "mb-isodate-0005", "path": "src/isodate/isotzinfo.py", "old": "1", "new": "0"}
+{"id": "mb-isodate-0006", "path": "src/isodate/isotime.py", "old": "60", "new": "61"}
+{"id": "mb-isodate-0007", "path": "src/isodate/duration.py", "old": " or ", "new": " and "}
+{"id": "mb-isodate-0008", "path": "src/isodate/isotzinfo.py", "old": "seconds = abs(seconds)", "new": "pass"}
+{"id": "mb-isodate-0009", "path": "src/isodate/duration.py", "old": "-", "new": "+"}
+{"id": "mb-isodate-0010", "path": "src/isodate/isodates.py", "old": "yeardigits, expanded", "new": "expanded, yeardigits"}
+{"id": "mb-isodate-0011", "path": "src/isodate/isodates.py", "old": "sign = (groups[\"sign\"] == \"-\" and -1) or 1", "new": "pass"}
+{"id": "mb-isodate-0012", "path": "src/isodate/isostrf.py", "old": "yeardigits", "new": "format"}
+{"id": "mb-isodate-0013", "path": "src/isodate/duration.py", "old": "newduration", "new": "newmonth"}
+{"id": "mb-isodate-0014", "path": "src/isodate/isotzinfo.py", "old": "minutes, seconds = divmod(seconds, 60)", "new": "pass"}
+{"id": "mb-isodate-0015", "path": "src/isodate/duration.py", "old": "-", "new": "+"}
+{"id": "mb-isodate-0016", "path": "src/isodate/duration.py", "old": "other, Duration", "new": "Duration, other"}
+{"id": "mb-isodate-0017", "path": "src/isodate/isodates.py", "old": "isodates", "new": "match"}
+{"id": "mb-isodate-0018", "path": "src/isodate/duration.py", "old": "self", "new": "negduration"}
+{"id": "mb-isodate-0019", "path": "src/isodate/tzinfo.py", "old": "stamp", "new": "dt"}
+{"id": "mb-isodate-0020", "path": "src/isodate/duration.py", "old": "self", "new": "other"}
+{"id": "mb-isodate-0021", "path": "src/isodate/duration.py", "old": "a", "new": "high"}
+{"id": "mb-isodate-0022", "path": "src/isodate/duration.py", "old": "12", "new": "13"}
+{"id": "mb-isodate-0023", "path": "src/isodate/isodates.py", "old": "groups", "new": "expanded"}
+{"id": "mb-isodate-0024", "path": "src/isodate/isostrf.py", "old": "ret", "new": "match"}
+{"id": "mb-isodate-0025", "path": "src/isodate/isostrf.py", "old": "ret: list[str] = []", "new": "pass"}
+{"id": "mb-isodate-0026", "path": "src/isodate/duration.py", "old": "+", "new": "-"}
+{"id": "mb-isodate-0027", "path": "src/isodate/isodates.py", "old": "yeardigits", "new": "cache_entry"}
+{"id": "mb-isodate-0028", "path": "src/isodate/duration.py", "old": "newmonth = other.month - self.months", "new": "pass"}
+{"id": "mb-isodate-0029", "path": "src/isodate/isoduration.py", "old": "datestring", "new": "key"}
+{"id": "mb-toolz-0000", "path": "toolz/dicttoolz.py", "old": "kwargs", "new": "f"}
+{"id": "mb-toolz-0001", "path": "toolz/itertoolz.py", "old": "item in seen", "new": "True"}
+{"id": "mb-toolz-0002", "path": "toolz/functoolz.py", "old": "args", "new": "func"}
+{"id": "mb-toolz-0003", "path": "toolz/itertoolz.py", "old": "key not in seen_keys", "new": "True"}
+{"id": "mb-toolz-0004", "path": "toolz/dicttoolz.py", "old": "factory", "new": "d"}
+{"id": "mb-toolz-0005", "path": "toolz/functoolz.py", "old": "_kwargs.update(kwargs)", "new": "pass"}
+{"id": "mb-toolz-0006", "path": "toolz/itertoolz.py", "old": "seq, n", "new": "n, seq"}
+{"id": "mb-toolz-0007", "path": "toolz/itertoolz.py", "old": "yield from seq1", "new": "pass"}
+{"id": "mb-toolz-0008", "path": "toolz/_signatures.py", "old": "func", "new": "checks"}
+{"id": "mb-toolz-0009", "path": "toolz/functoolz.py", "old": "None, builtin_func(*builtin_args)", "new": "None"}
+{"id": "mb-toolz-0010", "path": "toolz/functoolz.py", "old": "func, sigspec", "new": "sigspec, func"}
+{"id": "mb-toolz-0011", "path": "toolz/functoolz.py", "old": "obj = obj.func", "new": "pass"}
+{"id": "mb-toolz-0012", "path": "toolz/itertoolz.py", "old": "val1", "new": "val2"}
+{"id": "mb-toolz-0013", "path": "toolz/functoolz.py", "old": "self", "new": "_kwargs"}
+{"id": "mb-toolz-0014", "path": "toolz/_signatures.py", "old": "sigs", "new": "kwargs"}
+{"id": "mb-toolz-0015", "path": "toolz/functoolz.py", "old": "cache[k] = result = func(*args, **kwargs)", "new": "pass"}
+{"id": "mb-toolz-0016", "path": "toolz/itertoolz.py", "old": "ind", "new": "get"}
+{"id": "mb-toolz-0017", "path": "toolz/_signatures.py", "old": "func", "new": "sig"}
+{"id": "mb-toolz-0018", "path": "toolz/itertoolz.py", "old": "operator.itemgetter(*ind)(seq)", "new": "None"}
+{"id": "mb-toolz-0019", "path": "toolz/itertoolz.py", "old": "items", "new": "key"}
+{"id": "mb-toolz-0020", "path": "toolz/functoolz.py", "old": "Compose(funcs)", "new": "None"}
+{"id": "mb-toolz-0021", "path": "toolz/functoolz.py", "old": "obj, curry", "new": "curry, obj"}
+{"id": "mb-toolz-0022", "path": "toolz/_signatures.py", "old": "func", "new": "checks"}
+{"id": "mb-toolz-0023", "path": "toolz/itertoolz.py", "old": "rightkey", "new": "key"}
+{"id": "mb-toolz-0024", "path": "toolz/dicttoolz.py", "old": "remaining = set(d)", "new": "pass"}
+{"id": "mb-toolz-0025", "path": "toolz/itertoolz.py", "old": "seqs", "new": "L1"}
+{"id": "mb-toolz-0026", "path": "toolz/functoolz.py", "old": "0", "new": "1"}
+{"id": "mb-toolz-0027", "path": "toolz/functoolz.py", "old": "0", "new": "1"}
+{"id": "mb-toolz-0028", "path": "toolz/__init__.py", "old": "rv", "new": "name"}
+{"id": "mb-toolz-0029", "path": "toolz/functoolz.py", "old": "result", "new": "k"}
+{"id": "mb-boltons-0000", "path": "boltons/iterutils.py", "old": "yield (i, min(i + chunk_size, input_stop))", "new": "pass"}
+{"id": "mb-boltons-0001", "path": "boltons/iterutils.py", "old": "value < 0 or (strictly_positive and value == 0)", "new": "True"}
+{"id": "mb-boltons-0002", "path": "boltons/socketutils.py", "old": "self", "new": "sock"}
+{"id": "mb-boltons-0003", "path": "boltons/socketutils.py", "old": "self", "new": "payload"}
+{"id": "mb-boltons-0004", "path": "boltons/setutils.py", "old": "other", "new": "self"}
+{"id": "mb-boltons-0005", "path": "boltons/fileutils.py", "old": "parts.append(key[i & _SINGLE_FULL_PERM])", "new": "pass"}
+{"id": "mb-boltons-0006", "path": "boltons/setutils.py", "old": "+", "new": "-"}
+{"id": "mb-boltons-0007", "path": "boltons/debugutils.py", "old": "type_name, bases", "new": "bases, type_name"}
+{"id": "mb-boltons-0008", "path": "boltons/timeutils.py", "old": "digits = tz[1:].replace(':', '').split('.')[0]", "new": "pass"}
+{"id": "mb-boltons-0009", "path": "boltons/dictutils.py", "old": "self", "new": "val"}
+{"id": "mb-boltons-0010", "path": "boltons/funcutils.py", "old": "code = compile(src, filename, 'single')", "new": "pass"}
+{"id": "mb-boltons-0011", "path": "boltons/tableutils.py", "old": "width", "new": "d"}
+{"id": "mb-boltons-0012", "path": "boltons/pathutils.py", "old": "home", "new": "path"}
+{"id": "mb-boltons-0013", "path": "boltons/statsutils.py", "old": "-", "new": "+"}
+{"id": "mb-boltons-0014", "path": "boltons/funcutils.py", "old": " or ", "new": " and "}
+{"id": "mb-boltons-0015", "path": "boltons/cacheutils.py", "old": "on_miss", "new": "self"}
+{"id": "mb-boltons-0016", "path": "boltons/tableutils.py", "old": "is_seq", "new": "True"}
+{"id": "mb-boltons-0017", "path": "boltons/namedutils.py", "old": "field_names", "new": "fmt_kw"}
+{"id": "mb-boltons-0018", "path": "boltons/ioutils.py", "old": "val", "new": "None"}
+{"id": "mb-boltons-0019", "path": "boltons/iterutils.py", "old": "chunk_size", "new": "overlap_size"}
+{"id": "mb-boltons-0020", "path": "boltons/strutils.py", "old": "master.lower() == master", "new": "True"}
+{"id": "mb-boltons-0021", "path": "boltons/fileutils.py", "old": "kept_names", "new": "keep"}
+{"id": "mb-boltons-0022", "path": "boltons/mathutils.py", "old": "i", "new": "options"}
+{"id": "mb-boltons-0023", "path": "boltons/iterutils.py", "old": "tees = itertools.tee(src, size)", "new": "pass"}
+{"id": "mb-boltons-0024", "path": "boltons/fileutils.py", "old": "3", "new": "4"}
+{"id": "mb-boltons-0025", "path": "boltons/dictutils.py", "old": "self", "new": "v"}
+{"id": "mb-boltons-0026", "path": "boltons/funcutils.py", "old": "a", "new": "default_factory"}
+{"id": "mb-boltons-0027", "path": "boltons/iterutils.py", "old": "sep", "new": "s"}
+{"id": "mb-boltons-0028", "path": "boltons/dictutils.py", "old": "data.update(*a, **kw)", "new": "pass"}
+{"id": "mb-boltons-0029", "path": "boltons/iterutils.py", "old": "align", "new": "True"}
+{"id": "mb-attrs-0000", "path": "src/attr/_make.py", "old": "converter", "new": "lines"}
+{"id": "mb-attrs-0001", "path": "src/attr/_make.py", "old": "script", "new": "globs"}
+{"id": "mb-attrs-0002", "path": "src/attr/_make.py", "old": "count", "new": "linecache_tuple"}
+{"id": "mb-attrs-0003", "path": "src/attr/_make.py", "old": "attr_name", "new": "arg_name"}
+{"id": "mb-attrs-0004", "path": "src/attr/_make.py", "old": "attr_name, value_var", "new": "value_var, attr_name"}
+{"id": "mb-attrs-0005", "path": "src/attr/_make.py", "old": "cd", "new": "slot_descriptor"}
+{"id": "mb-attrs-0006", "path": "src/attr/validators.py", "old": "value", "new": "attr"}
+{"id": "mb-attrs-0007", "path": "src/attr/_make.py", "old": "val", "new": "gen"}
+{"id": "mb-attrs-0008", "path": "src/attr/_make.py", "old": "cached_prop", "new": "base_names"}
+{"id": "mb-attrs-0009", "path": "src/attr/_compat.py", "old": "params", "new": "self"}
+{"id": "mb-attrs-0010", "path": "src/attr/_make.py", "old": "val", "new": "field"}
+{"id": "mb-attrs-0011", "path": "src/attr/_make.py", "old": "base_cls", "new": "seen"}
+{"id": "mb-attrs-0012", "path": "src/attr/__init__.py", "old": "name", "new": "mod"}
+{"id": "mb-attrs-0013", "path": "src/attr/_make.py", "old": "not self._has_custom_setattr", "new": "True"}
+{"id": "mb-attrs-0014", "path": "src/attr/_make.py", "old": "0, a", "new": "a, 0"}
+{"id": "mb-attrs-0015", "path": "src/attr/_make.py", "old": "class_body", "new": "attrs"}
+{"id": "mb-attrs-0016", "path": "src/attr/validators.py", "old": "inst, attr", "new": "attr, inst"}
+{"id": "mb-attrs-0017", "path": "src/attr/_make.py", "old": "cls", "new": "msg"}
+{"id": "mb-attrs-0018", "path": "src/attr/validators.py", "old": "vals", "new": "v"}
+{"id": "mb-attrs-0019", "path": "src/attr/_make.py", "old": "annot.startswith((\"'\", '\"')) and annot.endswith((\"'\", '\"'))", "new": "True"}
+{"id": "mb-attrs-0020", "path": "src/attr/_make.py", "old": "pre_init_func = cls.__attrs_pre_init__", "new": "pass"}
+{"id": "mb-attrs-0021", "path": "src/attr/exceptions.py", "old": "self", "new": "value"}
+{"id": "mb-attrs-0022", "path": "src/attr/_funcs.py", "old": "val_type = type(val)", "new": "pass"}
+{"id": "mb-attrs-0023", "path": "src/attr/_version_info.py", "old": "other", "new": "us"}
+{"id": "mb-attrs-0024", "path": "src/attr/validators.py", "old": "repr_options", "new": "options"}
+{"id": "mb-attrs-0025", "path": "src/attr/_make.py", "old": "attrs is None", "new": "True"}
+{"id": "mb-attrs-0026", "path": "src/attr/_funcs.py", "old": " and ", "new": " or "}
+{"id": "mb-attrs-0027", "path": "src/attr/_funcs.py", "old": "attrs = fields(inst.__class__)", "new": "pass"}
+{"id": "mb-attrs-0028", "path": "src/attr/_make.py", "old": "not self._has_custom_setattr", "new": "True"}
+{"id": "mb-attrs-0029", "path": "src/attr/_make.py", "old": "on_setattr", "new": "hash"}
+{"id": "mb-more-itertools-0000", "path": "more_itertools/more.py", "old": "a", "new": "f"}
+{"id": "mb-more-itertools-0001", "path": "more_itertools/more.py", "old": "self._start - value, -self._step", "new": "-self._step, self._start - value"}
+{"id": "mb-more-itertools-0002", "path": "more_itertools/more.py", "old": "target", "new": "self"}
+{"id": "mb-more-itertools-0003", "path": "more_itertools/more.py", "old": "self", "new": "argc"}
+{"id": "mb-more-itertools-0004", "path": "more_itertools/more.py", "old": "self", "new": "item"}
+{"id": "mb-more-itertools-0005", "path": "more_itertools/more.py", "old": "it", "new": "i"}
+{"id": "mb-more-itertools-0006", "path": "more_itertools/more.py", "old": "r", "new": "algorithm"}
+{"id": "mb-more-itertools-0007", "path": "more_itertools/more.py", "old": "xarr", "new": "k"}
+{"id": "mb-more-itertools-0008", "path": "more_itertools/more.py", "old": "iterables", "new": "item"}
+{"id": "mb-more-itertools-0009", "path": "more_itertools/more.py", "old": "coeffs = [roots_of_unity[k * n % N] for n in range(N)]", "new": "pass"}
+{"id": "mb-more-itertools-0010", "path": "more_itertools/more.py", "old": "0", "new": "1"}
+{"id": "mb-more-itertools-0011", "path": "more_itertools/more.py", "old": " and ", "new": " or "}
+{"id": "mb-more-itertools-0012", "path": "more_itertools/recipes.py", "old": " and ", "new": " or "}
+{"id": "mb-more-itertools-0013", "path": "more_itertools/recipes.py", "old": "window", "new": "m"}
+{"id": "mb-more-itertools-0014", "path": "more_itertools/more.py", "old": "occupations", "new": "i"}
+{"id": "mb-more-itertools-0015", "path": "more_itertools/more.py", "old": "levels is not None and level > levels", "new": "True"}
+{"id": "mb-more-itertools-0016", "path": "more_itertools/more.py", "old": "self", "new": "item"}
+{"id": "mb-more-itertools-0017", "path": "more_itertools/more.py", "old": "it", "new": "iterable"}
+{"id": "mb-more-itertools-0018", "path": "more_itertools/more.py", "old": "self", "new": "wait_seconds"}
+{"id": "mb-more-itertools-0019", "path": "more_itertools/more.py", "old": "n", "new": "None"}
+{"id": "mb-more-itertools-0020", "path": "more_itertools/more.py", "old": "self._step == self._zero", "new": "True"}
+{"id": "mb-more-itertools-0021", "path": "more_itertools/more.py", "old": "1", "new": "0"}
+{"id": "mb-more-itertools-0022", "path": "more_itertools/more.py", "old": "i = pool.index(e, i)", "new": "pass"}
+{"id": "mb-more-itertools-0023", "path": "more_itertools/more.py", "old": "-", "new": "+"}
+{"id": "mb-more-itertools-0024", "path": "more_itertools/more.py", "old": "i", "new": "pool"}
+{"id": "mb-more-itertools-0025", "path": "more_itertools/more.py", "old": "self", "new": "item_value"}
+{"id": "mb-more-itertools-0026", "path": "more_itertools/more.py", "old": "key", "new": "use_key"}
+{"id": "mb-more-itertools-0027", "path": "more_itertools/more.py", "old": "k", "new": "r"}
+{"id": "mb-more-itertools-0028", "path": "more_itertools/more.py", "old": "iterator", "new": "too_short"}
+{"id": "mb-more-itertools-0029", "path": "more_itertools/more.py", "old": "r", "new": "index"}
+{"id": "mb-dateutil-0000", "path": "src/dateutil/tz/tz.py", "old": "posix_offset", "new": "self"}
+{"id": "mb-dateutil-0001", "path": "src/dateutil/tz/_tzfile.py", "old": "trans_idx", "new": "charcnt"}
+{"id": "mb-dateutil-0002", "path": "src/dateutil/tz/tz.py", "old": "comptype", "new": "tzid"}
+{"id": "mb-dateutil-0003", "path": "src/dateutil/parser/isoparser.py", "old": "not 0 < day < 8", "new": "True"}
+{"id": "mb-dateutil-0004", "path": "src/dateutil/utils.py", "old": "dt", "new": "tzinfo"}
+{"id": "mb-dateutil-0005", "path": "src/dateutil/relativedelta.py", "old": "hours_f", "new": "hours"}
+{"id": "mb-dateutil-0006", "path": "src/dateutil/rrule.py", "old": "n", "new": "splt"}
+{"id": "mb-dateutil-0007", "path": "src/dateutil/tz/tz.py", "old": "1", "new": "0"}
+{"id": "mb-dateutil-0008", "path": "src/dateutil/rrule.py", "old": "interval", "new": "gettimeset"}
+{"id": "mb-dateutil-0009", "path": "src/dateutil/relativedelta.py", "old": "other, relativedelta", "new": "relativedelta, other"}
+{"id": "mb-dateutil-0010", "path": "src/dateutil/tz/_common.py", "old": "isdst", "new": "dt"}
+{"id": "mb-dateutil-0011", "path": "src/dateutil/tz/_tzfile.py", "old": "ordinal = self._ymd2ord(year, self.m, month_day)", "new": "pass"}
+{"id": "mb-dateutil-0012", "path": "src/dateutil/tz/_tzfile.py", "old": "first_day", "new": "ordinal"}
+{"id": "mb-dateutil-0013", "path": "src/dateutil/relativedelta.py", "old": "1", "new": "0"}
+{"id": "mb-dateutil-0014", "path": "src/dateutil/parser/isoparser.py", "old": "pos = 4", "new": "pass"}
+{"id": "mb-dateutil-0015", "path": "src/dateutil/rrule.py", "old": "month", "new": "no1wkst"}
+{"id": "mb-dateutil-0016", "path": "src/dateutil/rrule.py", "old": "self", "new": "month"}
+{"id": "mb-dateutil-0017", "path": "src/dateutil/parser/isoparser.py", "old": "self", "new": "frac"}
+{"id": "mb-dateutil-0018", "path": "src/dateutil/tz/_tzfile.py", "old": "self", "new": "other"}
+{"id": "mb-dateutil-0019", "path": "src/dateutil/parser/_parser.py", "old": "i", "new": "len_l"}
+{"id": "mb-dateutil-0020", "path": "src/dateutil/rrule.py", "old": "date", "new": "second"}
+{"id": "mb-dateutil-0021", "path": "src/dateutil/parser/_parser.py", "old": "self.charstack.append(nextchar)", "new": "pass"}
+{"id": "mb-dateutil-0022", "path": "src/dateutil/rrule.py", "old": "pos == 0 or not (-366 <= pos <= 366)", "new": "True"}
+{"id": "mb-dateutil-0023", "path": "src/dateutil/parser/isoparser.py", "old": "1", "new": "2"}
+{"id": "mb-dateutil-0024", "path": "src/dateutil/rrule.py", "old": "year", "new": "bysetpos"}
+{"id": "mb-dateutil-0025", "path": "src/dateutil/parser/isoparser.py", "old": "f(self, str_in, *args, **kwargs)", "new": "None"}
+{"id": "mb-dateutil-0026", "path": "src/dateutil/relativedelta.py", "old": "other", "new": "self"}
+{"id": "mb-dateutil-0027", "path": "src/dateutil/rrule.py", "old": "rr._bymonth", "new": "True"}
+{"id": "mb-dateutil-0028", "path": "src/dateutil/rrule.py", "old": "dayset", "new": "weekday"}
+{"id": "mb-dateutil-0029", "path": "src/dateutil/relativedelta.py", "old": "0", "new": "1"}

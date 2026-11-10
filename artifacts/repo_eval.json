@@ -1,0 +1,467 @@
+{
+ "toolz": {
+  "url": "https://github.com/pytoolz/toolz",
+  "commit": "451af60dec590a6010e2babdbf391ea8f815122f",
+  "license_head": "Copyright (c) 2013 Matthew Rocklin  All rights reserved.  Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:",
+  "c_files": 0,
+  "py_files": 51,
+  "install_ok": true,
+  "suite_s": [
+   2.6,
+   0.6,
+   0.8
+  ],
+  "suite": [
+   [
+    0,
+    "192 passed, 1 skipped in 1.94s"
+   ],
+   [
+    0,
+    "192 passed, 1 skipped in 0.39s"
+   ],
+   [
+    0,
+    "192 passed, 1 skipped in 0.41s"
+   ]
+  ],
+  "deterministic": false
+ },
+ "sortedcontainers": {
+  "url": "https://github.com/grantjenks/python-sortedcontainers",
+  "commit": "3ac358631f58c1347f1d6d2d92784117db0f38ed",
+  "license_head": "Copyright 2014-2024 Grant Jenks  Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License a",
+  "c_files": 0,
+  "py_files": 26,
+  "install_ok": true,
+  "suite_s": [
+   7.9,
+   4.4,
+   4.5
+  ],
+  "suite": [
+   [
+    0,
+    "366 passed in 7.38s"
+   ],
+   [
+    0,
+    "366 passed in 4.14s"
+   ],
+   [
+    0,
+    "366 passed in 4.22s"
+   ]
+  ],
+  "deterministic": false
+ },
+ "more-itertools": {
+  "url": "https://github.com/more-itertools/more-itertools",
+  "commit": "ceafee8ce96f4bc1eb74c528bc247c91d648a0bb",
+  "license_head": "Copyright (c) 2012 Erik Rose  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software",
+  "c_files": 0,
+  "py_files": 7,
+  "install_ok": true,
+  "suite_s": [
+   29.0,
+   21.2,
+   18.1
+  ],
+  "suite": [
+   [
+    0,
+    "771 passed, 21203 subtests passed in 28.07s"
+   ],
+   [
+    0,
+    "771 passed, 21203 subtests passed in 20.73s"
+   ],
+   [
+    0,
+    "771 passed, 21203 subtests passed in 17.51s"
+   ]
+  ],
+  "deterministic": false
+ },
+ "boltons": {
+  "url": "https://github.com/mahmoud/boltons",
+  "commit": "d31d821d56c8f7756af9c30a864077f2e5855321",
+  "license_head": "Copyright (c) 2013, Mahmoud Hashemi  Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:      * Redistributio",
+  "c_files": 0,
+  "py_files": 66,
+  "install_ok": true,
+  "suite_s": [
+   4.8,
+   2.7,
+   2.7
+  ],
+  "suite": [
+   [
+    0,
+    "621 passed, 22 subtests passed in 4.27s"
+   ],
+   [
+    0,
+    "621 passed, 22 subtests passed in 2.40s"
+   ],
+   [
+    0,
+    "621 passed, 22 subtests passed in 2.39s"
+   ]
+  ],
+  "deterministic": false
+ },
+ "cachetools": {
+  "url": "https://github.com/tkem/cachetools",
+  "commit": "1ce79efa552d1bdda70d144d401ef9105d999184",
+  "license_head": "The MIT License (MIT)  Copyright (c) 2014-2026 Thomas Kemmer  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Sof",
+  "c_files": 0,
+  "py_files": 21,
+  "install_ok": true,
+  "suite_s": [
+   1.6,
+   0.7,
+   0.7
+  ],
+  "suite": [
+   [
+    0,
+    "416 passed, 24 subtests passed in 1.09s"
+   ],
+   [
+    0,
+    "416 passed, 24 subtests passed in 0.38s"
+   ],
+   [
+    0,
+    "416 passed, 24 subtests passed in 0.42s"
+   ]
+  ],
+  "deterministic": false
+ },
+ "dateutil": {
+  "url": "https://github.com/dateutil/dateutil",
+  "commit": "a78cbd81d5d03b5f126eb36edb92bca78972c804",
+  "license_head": "Copyright 2017- Paul Ganssle <paul@ganssle.io> Copyright 2017- dateutil contributors (see AUTHORS file)     Licensed under the Apache License, Version 2.0 (the \"License\");    you may not use this file",
+  "c_files": 0,
+  "py_files": 45,
+  "install_ok": true,
+  "suite_s": [
+   21.3,
+   19.7,
+   34.1
+  ],
+  "suite": [
+   [
+    0,
+    "5065 passed, 262 skipped, 17 xfailed in 20.41s"
+   ],
+   [
+    0,
+    "5065 passed, 262 skipped, 17 xfailed in 18.84s"
+   ],
+   [
+    0,
+    "5065 passed, 262 skipped, 17 xfailed in 33.42s"
+   ]
+  ],
+  "deterministic": false
+ },
+ "tomli": {
+  "url": "https://github.com/hukkin/tomli",
+  "commit": "43a86ade8b795c6ef9b4ec53372a607cd1ed426f",
+  "license_head": "SPDX-License-Identifier: MIT SPDX-FileCopyrightText: 2021 Taneli Hukkinen Licensed to PSF under a Contributor Agreement. ",
+  "c_files": 0,
+  "py_files": 14,
+  "install_ok": true,
+  "suite_s": [
+   2.7,
+   0.6,
+   0.6
+  ],
+  "suite": [
+   [
+    0,
+    "17 passed, 1 skipped, 744 subtests passed in 1.73s"
+   ],
+   [
+    0,
+    "17 passed, 1 skipped, 744 subtests passed in 0.32s"
+   ],
+   [
+    0,
+    "17 passed, 1 skipped, 744 subtests passed in 0.32s"
+   ]
+  ],
+  "deterministic": false
+ },
+ "attrs": {
+  "url": "https://github.com/python-attrs/attrs",
+  "commit": "9d9f94a043de7fc4012459853a4ed597a5577855",
+  "license_head": "The MIT License (MIT)  Copyright (c) 2015 Hynek Schlawack and the attrs contributors  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated docum",
+  "c_files": 0,
+  "py_files": 56,
+  "install_ok": false,
+  "install_log": "error: Failed to create virtual environment\n  cause: A virtual environment already exists at: .venv\n\nhint: Use the `--clear` flag or set `UV_VENV_CLEAR=1` to replace the existing virtual environment\n",
+  "suite_s": [
+   6.6,
+   6.6,
+   6.2
+  ],
+  "suite": [
+   [
+    0,
+    "1398 passed, 11 skipped, 2 deselected, 1 xfailed",
+    []
+   ],
+   [
+    0,
+    "1398 passed, 11 skipped, 2 deselected, 1 xfailed",
+    []
+   ],
+   [
+    0,
+    "1398 passed, 11 skipped, 2 deselected, 1 xfailed",
+    []
+   ]
+  ],
+  "deterministic": true,
+  "passes": true
+ },
+ "funcy": {
+  "url": "https://github.com/Suor/funcy",
+  "commit": "a876c7e1cf11e7c746e91fce4632ebfa93865428",
+  "license_head": "Copyright (c) 2012-2026, Alexander Schepanovski. All rights reserved.  Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following condit",
+  "c_files": 0,
+  "py_files": 53,
+  "install_ok": true,
+  "suite_s": [
+   1.8,
+   0.4,
+   0.4
+  ],
+  "suite": [
+   [
+    1,
+    "1 error in 1.19s"
+   ],
+   [
+    1,
+    "1 error in 0.14s"
+   ],
+   [
+    1,
+    "1 error in 0.13s"
+   ]
+  ],
+  "deterministic": false
+ },
+ "pyparsing": {
+  "url": "https://github.com/pyparsing/pyparsing",
+  "commit": "810199f89bf916590426e1c5cb3d612584f11a2f",
+  "license_head": "Copyright (c) 2003-2025  Paul McGuire  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the",
+  "c_files": 0,
+  "py_files": 155,
+  "install_ok": true,
+  "suite_s": [
+   1.4,
+   0.4,
+   0.4
+  ],
+  "suite": [
+   [
+    1,
+    "1 error in 0.91s"
+   ],
+   [
+    1,
+    "1 error in 0.17s"
+   ],
+   [
+    1,
+    "1 error in 0.17s"
+   ]
+  ],
+  "deterministic": false
+ },
+ "bidict": {
+  "url": "https://github.com/jab/bidict",
+  "commit": "299fedc89f1d70d5d41cf7922564b376d3e2d435",
+  "license_head": "Mozilla Public License Version 2.0 ==================================  Copyright 2009-2026 Joshua Bronson. All rights reserved.   1. Definitions --------------  1.1. \"Contributor\"     means each indiv",
+  "c_files": 0,
+  "py_files": 20,
+  "install_ok": true,
+  "suite_s": [
+   1.5,
+   0.3,
+   0.3
+  ],
+  "suite": [
+   [
+    4,
+    "  rootdir: /home/user/Downloads/project/data/marketbugs/repos/bidict"
+   ],
+   [
+    4,
+    "  rootdir: /home/user/Downloads/project/data/marketbugs/repos/bidict"
+   ],
+   [
+    4,
+    "  rootdir: /home/user/Downloads/project/data/marketbugs/repos/bidict"
+   ]
+  ],
+  "deterministic": false
+ },
+ "parse": {
+  "url": "https://github.com/r1chardj0n3s/parse",
+  "commit": "616ac26ca4077266dee2479dc51a8d19feab0ada",
+  "license_head": "Copyright (c) 2012-2019 Richard Jones <richard@python.org>  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Softw",
+  "c_files": 0,
+  "py_files": 9,
+  "install_ok": true,
+  "suite_s": [
+   1.6,
+   0.2,
+   0.3
+  ],
+  "suite": [
+   [
+    4,
+    "  rootdir: /home/user/Downloads/project/data/marketbugs/repos/parse"
+   ],
+   [
+    4,
+    "  rootdir: /home/user/Downloads/project/data/marketbugs/repos/parse"
+   ],
+   [
+    4,
+    "  rootdir: /home/user/Downloads/project/data/marketbugs/repos/parse"
+   ]
+  ],
+  "deterministic": false
+ },
+ "humanize": {
+  "url": "https://github.com/python-humanize/humanize",
+  "commit": "d16e6352c9785c5ab86de0133222bd22e89b0db2",
+  "license_head": "Copyright (c) 2010-2020 Jason Moiron and Contributors  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\")",
+  "c_files": 0,
+  "py_files": 13,
+  "install_ok": true,
+  "suite_s": [
+   1.5,
+   0.3,
+   0.4
+  ],
+  "suite": [
+   [
+    1,
+    "\u001b[31m\u001b[31m\u001b[1m1 error\u001b[0m\u001b[31m in 0.95s\u001b[0m\u001b[0m"
+   ],
+   [
+    1,
+    "\u001b[31m\u001b[31m\u001b[1m1 error\u001b[0m\u001b[31m in 0.11s\u001b[0m\u001b[0m"
+   ],
+   [
+    1,
+    "\u001b[31m\u001b[31m\u001b[1m1 error\u001b[0m\u001b[31m in 0.12s\u001b[0m\u001b[0m"
+   ]
+  ],
+  "deterministic": false
+ },
+ "glom": {
+  "url": "https://github.com/mahmoud/glom",
+  "commit": "fd70d3051a6a1bcb5152ec2d8e2cdc8e852f95e6",
+  "license_head": "BSD 3-Clause License  Copyright (c) 2018, Mahmoud Hashemi  Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met",
+  "c_files": 0,
+  "py_files": 32,
+  "install_ok": false,
+  "install_log": "error: Failed to create virtual environment\n  cause: A virtual environment already exists at: .venv\n\nhint: Use the `--clear` flag or set `UV_VENV_CLEAR=1` to replace the existing virtual environment\n",
+  "suite_s": [
+   0.6,
+   0.4,
+   0.4
+  ],
+  "suite": [
+   [
+    1,
+    "1 failed, 30 passed",
+    [
+     "glom/test/test_cli.py::test_usage_errors"
+    ]
+   ],
+   [
+    1,
+    "1 failed, 30 passed",
+    [
+     "glom/test/test_cli.py::test_usage_errors"
+    ]
+   ],
+   [
+    1,
+    "1 failed, 30 passed",
+    [
+     "glom/test/test_cli.py::test_usage_errors"
+    ]
+   ]
+  ],
+  "deterministic": true,
+  "passes": false,
+  "fail_log_tail": "/T/pytest-of-user/pytest-12/test_usage_errors0/basic_spec.txt'\nbasic_target_path = '/tmp/pytest-of-user/pytest-12/test_usage_errors0/basic_target.txt'\n\n    def test_usage_errors(cc, basic_spec_path, basic_target_path):\n        # bad target json\n        res = cc.fail_1(['glom', BASIC_SPEC, '{' + BASIC_TARGET])\n        assert 'could not load target data' in res.stdout  # TODO: stderr\n    \n        # bad target yaml\n        res = cc.fail_1(['glom', '--target-format', 'yaml', BASIC_SPEC, '{' + BASIC_TARGET])\n>       assert 'could not load target data' in res.stdout  # TODO: stderr\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       assert 'could not load target data' in 'error: No YAML package found. To process yaml files, run: pip install PyYAML\\n'\nE        +  where 'error: No YAML package found. To process yaml files, run: pip install PyYAML\\n' = RunResult(args=['glom', '--target-format', 'yaml', '{\"a\": \"a.b\"}', '{{\"a\": {\"b\": \"c\"}}'], returncode=1, stdout='error:...: pip install PyYAML\\n', exception=UsageError('No YAML package found. To process yaml files, run: pip install PyYAML')).stdout\n\nglom/test/test_cli.py:84: AssertionError\n=========================== short test summary info ============================\nFAILED glom/test/test_cli.py::test_usage_errors - assert 'could not load targ...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 30 passed in 0.21s\n"
+ },
+ "isodate": {
+  "url": "https://github.com/gweis/isodate",
+  "commit": "17cb25eb7bc3556a68f3f7b241313e9bb8b23760",
+  "license_head": "Copyright (c) 2021, Hugo van Kemenade and contributors Copyright (c) 2009-2018, Gerhard Weis and contributors Copyright (c) 2009, Gerhard Weis All rights reserved.  Redistribution and use in source an",
+  "c_files": 0,
+  "py_files": 16,
+  "install_ok": true,
+  "suite_s": [
+   1.5,
+   0.5,
+   0.5
+  ],
+  "suite": [
+   [
+    0,
+    "280 passed in 1.00s"
+   ],
+   [
+    0,
+    "280 passed in 0.27s"
+   ],
+   [
+    0,
+    "280 passed in 0.26s"
+   ]
+  ],
+  "deterministic": false
+ },
+ "intervaltree": {
+  "url": "https://github.com/chaimleib/intervaltree",
+  "commit": "1bc406e1f441577c4e421fc51aba2ab67fbd97fb",
+  "license_head": "                                  Apache License                            Version 2.0, January 2004                         http://www.apache.org/licenses/     TERMS AND CONDITIONS FOR USE, REPRODUC",
+  "c_files": 0,
+  "py_files": 47,
+  "install_ok": true,
+  "suite_s": [
+   10.9,
+   8.3,
+   7.6
+  ],
+  "suite": [
+   [
+    0,
+    "104 passed in 10.12s"
+   ],
+   [
+    0,
+    "104 passed in 7.63s"
+   ],
+   [
+    0,
+    "104 passed in 7.11s"
+   ]
+  ],
+  "deterministic": false
+ }
+}

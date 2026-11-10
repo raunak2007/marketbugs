@@ -1,5 +1,5 @@
 """Evaluate candidate MarketBugs repos: license, pure-python, suite time x3, determinism."""
-import json, subprocess, sys, time, os
+import json, re, subprocess, sys, time, os
 from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 REPOS = ROOT / "data/marketbugs/repos"
@@ -16,7 +16,7 @@ CANDS = {
 def sh(cmd, cwd=None, timeout=900):
     r = subprocess.run(cmd, cwd=cwd, shell=True, capture_output=True, text=True, timeout=timeout)
     return r.returncode, r.stdout[-3000:] + r.stderr[-2000:]
-def main(names):
+def main(names, args=()):
     REPOS.mkdir(parents=True, exist_ok=True)
     out = {}
     for n in names:
@@ -35,13 +35,23 @@ def main(names):
             if code: res["install_log"] = log[-800:]
             times, summaries = [], []
             for _ in range(3):
-                t = time.time(); code, log = sh(".venv/bin/python -m pytest -q -x -p no:cacheprovider --timeout=120", d, timeout=400)
-                times.append(round(time.time() - t, 1)); summaries.append((code, log.strip().splitlines()[-1] if log.strip() else ""))
+                t = time.time(); code, log = sh(".venv/bin/python -m pytest -q -x -rfE -p no:cacheprovider --timeout=120 " + " ".join(args), d, timeout=400)
+                times.append(round(time.time() - t, 1))
+                last = re.sub(r"\x1b\[[0-9;]*m", "", log.strip().splitlines()[-1]) if log.strip() else ""
+                fails = sorted(set(re.findall(r"^(?:FAILED|ERROR) (\S+)", log, re.M)))
+                # compare outcome without wall-clock time (the old check compared timings and was always False)
+                summaries.append((code, re.sub(r" in [0-9.]+s.*$", "", last).strip(), tuple(fails)))
             res["suite_s"], res["suite"] = times, summaries
-            res["deterministic"] = len({s for s in summaries}) == 1 and summaries[0][0] == 0
+            res["deterministic"] = len(set(summaries)) == 1
+            res["passes"] = res["deterministic"] and summaries[0][0] == 0
+            if not res["passes"]: res["fail_log_tail"] = log[-1500:]
         except Exception as e:
             res["error"] = repr(e)
         out[n] = res; print(n, json.dumps({k: v for k, v in res.items() if k not in ("install_log",)})[:400], flush=True)
-    (ROOT / "artifacts/repo_eval.json").write_text(json.dumps(out, indent=1))
+    outp = ROOT / "artifacts/repo_eval.json"
+    prev = json.loads(outp.read_text()) if outp.exists() else {}
+    prev.update(out); outp.write_text(json.dumps(prev, indent=1))
 if __name__ == "__main__":
-    main(sys.argv[1:] or list(CANDS))
+    # usage: eval_repos [names...] [-- extra pytest args]
+    a = sys.argv[1:]; extra = a[a.index("--") + 1:] if "--" in a else []; a = a[:a.index("--")] if "--" in a else a
+    main(a or list(CANDS), extra)

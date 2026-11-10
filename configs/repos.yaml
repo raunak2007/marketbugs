@@ -1,0 +1,80 @@
+# MarketBugs repos. APPROVED by human 2026-11-10 (9 clean + attrs w/ 1 deselected test).
+# Split by repo: random.Random(20261110).sample(sorted(names), 3) -> dev; chosen before any mutant results.
+# Rejected: funcy, pyparsing, humanize (collection error), bidict (exit 4; MPL-2.0), parse (exit 4), glom (1 env failure; backup).
+split_seed: 20261110
+repos:
+  attrs:
+    url: https://github.com/python-attrs/attrs
+    commit: 9d9f94a043de7fc4012459853a4ed597a5577855
+    license: MIT
+    split: test
+    suite_warm_s: 6.6
+    timeout: 60
+    pytest_args:
+    - --deselect=tests/test_packaging.py::TestLegacyMetadataHack::test_version_info
+    exclusions:
+    - 'tests/test_packaging.py::TestLegacyMetadataHack::test_version_info (2 params):
+      shallow clone has no tags -> version ''0.1.dev1'' unparseable; environment artifact'
+  boltons:
+    url: https://github.com/mahmoud/boltons
+    commit: d31d821d56c8f7756af9c30a864077f2e5855321
+    license: BSD-3-Clause
+    split: test
+    suite_warm_s: 2.7
+    timeout: 60
+  cachetools:
+    url: https://github.com/tkem/cachetools
+    commit: 1ce79efa552d1bdda70d144d401ef9105d999184
+    license: MIT
+    split: dev
+    suite_warm_s: 0.7
+    timeout: 60
+  dateutil:
+    url: https://github.com/dateutil/dateutil
+    commit: a78cbd81d5d03b5f126eb36edb92bca78972c804
+    license: Apache-2.0 AND BSD-3-Clause
+    split: test
+    suite_warm_s: 34.1
+    timeout: 166
+  intervaltree:
+    url: https://github.com/chaimleib/intervaltree
+    commit: 1bc406e1f441577c4e421fc51aba2ab67fbd97fb
+    license: Apache-2.0
+    split: dev
+    suite_warm_s: 8.3
+    timeout: 63
+  isodate:
+    url: https://github.com/gweis/isodate
+    commit: 17cb25eb7bc3556a68f3f7b241313e9bb8b23760
+    license: BSD-3-Clause
+    split: test
+    suite_warm_s: 0.5
+    timeout: 60
+  more-itertools:
+    url: https://github.com/more-itertools/more-itertools
+    commit: ceafee8ce96f4bc1eb74c528bc247c91d648a0bb
+    license: MIT
+    split: test
+    suite_warm_s: 21.2
+    timeout: 114
+  sortedcontainers:
+    url: https://github.com/grantjenks/python-sortedcontainers
+    commit: 3ac358631f58c1347f1d6d2d92784117db0f38ed
+    license: Apache-2.0
+    split: dev
+    suite_warm_s: 4.5
+    timeout: 60
+  tomli:
+    url: https://github.com/hukkin/tomli
+    commit: 43a86ade8b795c6ef9b4ec53372a607cd1ed426f
+    license: MIT
+    split: test
+    suite_warm_s: 0.6
+    timeout: 60
+  toolz:
+    url: https://github.com/pytoolz/toolz
+    commit: 451af60dec590a6010e2babdbf391ea8f815122f
+    license: BSD-3-Clause
+    split: test
+    suite_warm_s: 0.8
+    timeout: 60

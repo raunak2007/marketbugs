@@ -1,0 +1,51 @@
+### cachetools 17:44:37
+mb-cachetools-0037 wrong_var RRCache.popitem direct
+mb-cachetools-0038 stmt_deletion _MethodDescriptor.__set_name__ far
+mb-cachetools-0039 wrong_var LFUCache.__delitem__ direct
+cachetools {'no_fail': 2, 'flaky': 1, 'timeout': 1, 'invalid': 0, 'multi_fn': 0, 'tried': 44, 'valid': 40}
+### tomli 17:47:03
+mb-tomli-0027 stmt_deletion TOMLDecodeError.__init__ far
+mb-tomli-0028 arith_swap parse_value far
+mb-tomli-0029 cond_removal make_safe_parse_float far
+tomli {'no_fail': 691, 'flaky': 0, 'timeout': 6, 'invalid': 0, 'multi_fn': 0, 'tried': 727, 'valid': 30}
+### isodate 18:00:54
+mb-isodate-0027 wrong_var build_date_regexps direct
+mb-isodate-0028 stmt_deletion Duration.__rsub__ direct
+mb-isodate-0029 wrong_var parse_duration direct
+isodate {'no_fail': 7, 'flaky': 0, 'timeout': 0, 'invalid': 0, 'multi_fn': 0, 'tried': 37, 'valid': 30}
+### toolz 18:01:41
+mb-toolz-0027 off_by_one Compose.__doc__.composed_doc direct
+mb-toolz-0028 wrong_var __getattr__ far
+mb-toolz-0029 wrong_var memoize.memof far
+toolz {'no_fail': 11, 'flaky': 0, 'timeout': 1, 'invalid': 0, 'multi_fn': 0, 'tried': 42, 'valid': 30}
+### boltons 18:03:33
+mb-boltons-0027 wrong_var split_iter direct
+mb-boltons-0028 stmt_deletion FrozenDict.updated far
+mb-boltons-0029 cond_removal chunk_ranges far
+boltons {'no_fail': 21, 'flaky': 0, 'timeout': 0, 'invalid': 0, 'multi_fn': 0, 'tried': 51, 'valid': 30}
+### sortedcontainers 18:06:24
+mb-sortedcontainers-0037 wrong_var SortedKeyList.irange_key direct
+mb-sortedcontainers-0038 wrong_var SortedList._build_index far
+mb-sortedcontainers-0039 wrong_var SortedList.__mul__ direct
+sortedcontainers {'no_fail': 6, 'flaky': 0, 'timeout': 1, 'invalid': 0, 'multi_fn': 0, 'tried': 47, 'valid': 40}
+### attrs 18:09:27
+mb-attrs-0027 stmt_deletion asdict direct
+mb-attrs-0028 cond_removal _ClassBuilder._patch_original_class far
+mb-attrs-0029 wrong_var attrib far
+attrs {'no_fail': 17, 'flaky': 0, 'timeout': 0, 'invalid': 0, 'multi_fn': 0, 'tried': 47, 'valid': 30}
+### intervaltree 18:12:35
+mb-intervaltree-0037 wrong_var Node.verify direct
+mb-intervaltree-0038 wrong_var Node.remove_interval_helper direct
+mb-intervaltree-0039 wrong_var Node.contains_point direct
+intervaltree {'no_fail': 22, 'flaky': 0, 'timeout': 0, 'invalid': 0, 'multi_fn': 0, 'tried': 62, 'valid': 40}
+### more-itertools 18:19:12
+mb-more-itertools-0027 wrong_var combination_with_replacement_index far
+mb-more-itertools-0028 wrong_var one direct
+mb-more-itertools-0029 wrong_var permutation_index far
+more-itertools {'no_fail': 9, 'flaky': 0, 'timeout': 1, 'invalid': 0, 'multi_fn': 0, 'tried': 40, 'valid': 30}
+### dateutil 18:23:30
+mb-dateutil-0027 cond_removal _iterinfo.rebuild direct
+mb-dateutil-0028 wrong_var rrule._iter direct
+mb-dateutil-0029 off_by_one relativedelta.__init__ far
+dateutil {'no_fail': 29, 'flaky': 0, 'timeout': 0, 'invalid': 0, 'multi_fn': 0, 'tried': 59, 'valid': 30}
+DONE

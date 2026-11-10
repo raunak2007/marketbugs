@@ -5,7 +5,7 @@ test:
 	$(PY) -m pytest -q
 
 validate:
-	$(PY) -m src.schemas.validate instance $(wildcard data/marketbugs/*/instances.jsonl data/swebench_lite/instances.jsonl)
+	$(PY) -m src.schemas.validate instance $(filter-out %/eval_only.jsonl,$(wildcard data/marketbugs/*/*.jsonl)) $(wildcard data/swebench_lite/instances.jsonl)
 
 data: ## build + validate datasets; fails on any invalid row
 	$(PY) -m src.gen.build_marketbugs

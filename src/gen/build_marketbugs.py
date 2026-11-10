@@ -11,16 +11,18 @@ from pathlib import Path
 import yaml
 from src.gen.mutate import candidates_in_function, apply, is_valid_mutant
 from src.cands.functions import index_repo, trace_frames, enclosing
+from src.gen.restratify import stratum as _strat
 from src.cands.retrieval import Graph
 
 ROOT = Path(__file__).resolve().parents[2]
 REPOS = ROOT / "data/marketbugs/repos"
 FAILED_RE = re.compile(r"^FAILED (\S+?)(?: - (.*))?$", re.M)
 MIN_STATEMENTS = 3
+EXTRA_ARGS = []  # per-repo pytest_args from configs/repos.yaml (e.g. documented deselects)
 
 
 def pytest(d, args, timeout=180):
-    cmd = [str(d / ".venv/bin/python"), "-m", "pytest", "-q", "-p", "no:cacheprovider", "-p", "no:randomly", "--tb=native", "-rf", *args]
+    cmd = [str(d / ".venv/bin/python"), "-m", "pytest", "-q", "-p", "no:cacheprovider", "-p", "no:randomly", "--tb=native", "-rf", *EXTRA_ARGS, *args]
     try:
         r = subprocess.run(cmd, cwd=d, capture_output=True, text=True, timeout=timeout)
         return r.returncode, r.stdout + r.stderr
@@ -45,6 +47,19 @@ def first_failure_block(out, test_id):
     return "", ""
 
 
+STDLIB_RE = re.compile(r'/[^\s"\']*?/lib/python3\.\d+/')
+
+
+def sanitize(text, d):
+    """Repo-relative paths; no host paths/usernames; drop pytest '=====' footer lines."""
+    for root in {str(d.resolve()), str(d)}:
+        text = text.replace(root + "/", "")
+    text = STDLIB_RE.sub("<python>/", text)
+    text = text.replace(str(Path.home()), "/home/user")  # tests that print expanduser() etc.
+    drop = r"^(=+(\s.*)?|FAILED .*|\d+ (failed|passed|error|errors)\b.* in [0-9.]+s.*)$"  # footers, wall-clock
+    return "\n".join(l for l in text.splitlines() if not re.match(drop, l)).rstrip()
+
+
 def stratum(fns, graph, trace, gold_key, repo_root):
     frame_fns = []
     for p, ln, _ in trace_frames(trace, repo_root):
@@ -60,11 +75,13 @@ def stratum(fns, graph, trace, gold_key, repo_root):
 
 def build(name, cfg, cap, seed=123):
     d = REPOS / name
+    EXTRA_ARGS[:] = cfg.get("pytest_args", [])
     code, out = pytest(d, [], timeout=300)
     if code != 0:
         raise SystemExit(f"{name}: original suite does not pass ({code})")
     fns = index_repo(d)
     graph = Graph(fns)
+    fns_t = index_repo(d, include_tests=True); graph_t = Graph(fns_t)  # strata: test frames count (PLAN 5.1)
     rng = random.Random(seed)
     pool = []
     for f in fns:
@@ -110,6 +127,7 @@ def build(name, cfg, cap, seed=123):
             p.write_text(orig, encoding="utf-8")
         t0 = fail1[0]
         tb, msg = first_failure_block(o_full, t0)
+        tb, msg = sanitize(tb, d), sanitize(msg, d)
         test_informed = f"Failing test: {t0}\n{msg}\n\n{tb}"
         no_trace = f"Failing test: {t0}\n{msg}"
         iid = f"mb-{name}-{len(out_rows):04d}"
@@ -118,7 +136,7 @@ def build(name, cfg, cap, seed=123):
             "split": cfg["split"], "issue_text": test_informed, "trace": tb,
             "conditions": {"test_informed": test_informed, "no_trace": no_trace}, "failing_tests": fail1,
             "gold_functions": [f.key], "mutation_operator": m.operator, "mutation_span": list(m.span),
-            "stratum": stratum(fns, graph, tb, f.key, d), "generation_seed": seed, "validation_status": "ok",
+            "stratum": _strat(fns_t, graph_t, tb, {f.key}, d), "generation_seed": seed, "validation_status": "ok",
             "test_environment": "py3.11 + " + hashlib.sha256((d / ".venv/pyvenv.cfg").read_bytes()).hexdigest()[:12]})
         # evaluator-only patch, kept apart from instances
         with open(ROOT / f"data/marketbugs/{cfg['split']}/eval_only.jsonl", "a") as ef:

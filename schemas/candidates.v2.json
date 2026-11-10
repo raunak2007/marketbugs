@@ -1,0 +1,119 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "candidates.v2",
+ "type": "object",
+ "additionalProperties": false,
+ "required": [
+  "id",
+  "pool_size",
+  "gold_in_pool",
+  "pool",
+  "candidate_order",
+  "order_seed"
+ ],
+ "properties": {
+  "id": {
+   "type": "string"
+  },
+  "pool_size": {
+   "type": "integer",
+   "minimum": 1,
+   "maximum": 20
+  },
+  "gold_in_pool": {
+   "type": "boolean",
+   "$comment": "EVALUATOR-ONLY"
+  },
+  "pool": {
+   "type": "array",
+   "maxItems": 20,
+   "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "cid",
+     "path",
+     "qualname",
+     "code",
+     "retrieval_source",
+     "retrieval_score"
+    ],
+    "properties": {
+     "cid": {
+      "enum": [
+       "A",
+       "B",
+       "C",
+       "D",
+       "E",
+       "F",
+       "G",
+       "H",
+       "I",
+       "J",
+       "K",
+       "L",
+       "M",
+       "N",
+       "O",
+       "P",
+       "Q",
+       "R",
+       "S",
+       "T"
+      ]
+     },
+     "path": {
+      "type": "string"
+     },
+     "qualname": {
+      "type": "string"
+     },
+     "code": {
+      "type": "string"
+     },
+     "retrieval_source": {
+      "enum": [
+       "bm25",
+       "emb",
+       "graph"
+      ]
+     },
+     "retrieval_score": {
+      "type": "number"
+     }
+    }
+   }
+  },
+  "candidate_order": {
+   "type": "array",
+   "items": {
+    "enum": [
+     "A",
+     "B",
+     "C",
+     "D",
+     "E",
+     "F",
+     "G",
+     "H",
+     "I",
+     "J",
+     "K",
+     "L",
+     "M",
+     "N",
+     "O",
+     "P",
+     "Q",
+     "R",
+     "S",
+     "T"
+    ]
+   }
+  },
+  "order_seed": {
+   "type": "integer"
+  }
+ }
+}

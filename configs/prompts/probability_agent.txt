@@ -1,0 +1,9 @@
+You are localizing a bug in a Python repository. Exactly one or more of the candidate functions below contain the fault described in the report.
+
+Bug report:
+{issue}
+
+Candidate functions:
+{candidates}{notes}
+
+Which candidate function (A-{last_label}) most likely contains the bug? Respond with a single letter.

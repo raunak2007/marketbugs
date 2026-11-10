@@ -1,0 +1,89 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "note.v2",
+ "type": "object",
+ "additionalProperties": false,
+ "required": [
+  "id",
+  "agent",
+  "copy_idx",
+  "text",
+  "ranked_suspects",
+  "prompt_hash",
+  "model_revision",
+  "temperature",
+  "seed",
+  "input_tokens",
+  "output_tokens",
+  "latency_ms"
+ ],
+ "properties": {
+  "id": {
+   "type": "string"
+  },
+  "agent": {
+   "enum": [
+    "trace",
+    "graph",
+    "spec",
+    "static",
+    "semantic"
+   ]
+  },
+  "copy_idx": {
+   "type": "integer",
+   "minimum": 0
+  },
+  "text": {
+   "type": "string"
+  },
+  "ranked_suspects": {
+   "type": "array",
+   "items": {
+    "enum": [
+     "A",
+     "B",
+     "C",
+     "D",
+     "E",
+     "F",
+     "G",
+     "H",
+     "I",
+     "J",
+     "K",
+     "L",
+     "M",
+     "N",
+     "O",
+     "P",
+     "Q",
+     "R",
+     "S",
+     "T"
+    ]
+   }
+  },
+  "prompt_hash": {
+   "type": "string"
+  },
+  "model_revision": {
+   "type": "string"
+  },
+  "temperature": {
+   "type": "number"
+  },
+  "seed": {
+   "type": "integer"
+  },
+  "input_tokens": {
+   "type": "integer"
+  },
+  "output_tokens": {
+   "type": "integer"
+  },
+  "latency_ms": {
+   "type": "number"
+  }
+ }
+}

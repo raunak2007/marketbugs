@@ -1,0 +1,110 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "value_row.v2",
+ "type": "object",
+ "additionalProperties": false,
+ "required": [
+  "id",
+  "mode",
+  "subset_mask",
+  "order_perm",
+  "note_order",
+  "raw_candidate_logits",
+  "probs",
+  "gold_logscore",
+  "top1",
+  "token_mapping_hash",
+  "prompt_hash",
+  "model_revision",
+  "inference_cost_usd"
+ ],
+ "properties": {
+  "id": {
+   "type": "string"
+  },
+  "mode": {
+   "enum": [
+    "C",
+    "F",
+    "S"
+   ]
+  },
+  "subset_mask": {
+   "type": "integer",
+   "minimum": 0,
+   "maximum": 31
+  },
+  "order_perm": {
+   "type": "integer",
+   "minimum": 0
+  },
+  "note_order": {
+   "type": "array",
+   "items": {
+    "enum": [
+     "trace",
+     "graph",
+     "spec",
+     "static",
+     "semantic"
+    ]
+   }
+  },
+  "raw_candidate_logits": {
+   "type": "array",
+   "minItems": 1,
+   "maxItems": 20,
+   "items": {
+    "type": "number"
+   }
+  },
+  "probs": {
+   "type": "array",
+   "minItems": 1,
+   "maxItems": 20,
+   "items": {
+    "type": "number"
+   }
+  },
+  "gold_logscore": {
+   "type": "number"
+  },
+  "top1": {
+   "enum": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "I",
+    "J",
+    "K",
+    "L",
+    "M",
+    "N",
+    "O",
+    "P",
+    "Q",
+    "R",
+    "S",
+    "T"
+   ]
+  },
+  "token_mapping_hash": {
+   "type": "string"
+  },
+  "prompt_hash": {
+   "type": "string"
+  },
+  "model_revision": {
+   "type": "string"
+  },
+  "inference_cost_usd": {
+   "type": "number",
+   "minimum": 0
+  }
+ }
+}

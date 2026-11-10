@@ -1,0 +1,127 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "instance.v2",
+ "type": "object",
+ "additionalProperties": false,
+ "required": [
+  "id",
+  "source",
+  "repo",
+  "repo_license",
+  "base_commit",
+  "split",
+  "issue_text",
+  "trace",
+  "gold_functions",
+  "stratum",
+  "validation_status"
+ ],
+ "properties": {
+  "id": {
+   "type": "string"
+  },
+  "source": {
+   "enum": [
+    "marketbugs",
+    "swebench_lite"
+   ]
+  },
+  "repo": {
+   "type": "string"
+  },
+  "repo_license": {
+   "type": "string"
+  },
+  "base_commit": {
+   "type": "string"
+  },
+  "split": {
+   "enum": [
+    "dev",
+    "test"
+   ]
+  },
+  "issue_text": {
+   "type": "string"
+  },
+  "trace": {
+   "type": [
+    "string",
+    "null"
+   ]
+  },
+  "conditions": {
+   "type": [
+    "object",
+    "null"
+   ],
+   "properties": {
+    "test_informed": {
+     "type": "string"
+    },
+    "no_trace": {
+     "type": "string"
+    }
+   },
+   "additionalProperties": false
+  },
+  "failing_tests": {
+   "type": [
+    "array",
+    "null"
+   ],
+   "items": {
+    "type": "string"
+   }
+  },
+  "gold_functions": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   },
+   "$comment": "EVALUATOR-ONLY"
+  },
+  "mutation_operator": {
+   "type": [
+    "string",
+    "null"
+   ],
+   "$comment": "EVALUATOR-ONLY"
+  },
+  "mutation_span": {
+   "type": [
+    "array",
+    "null"
+   ],
+   "items": {
+    "type": "integer"
+   },
+   "minItems": 4,
+   "maxItems": 4,
+   "$comment": "EVALUATOR-ONLY"
+  },
+  "stratum": {
+   "enum": [
+    "direct",
+    "near",
+    "far",
+    "na"
+   ]
+  },
+  "generation_seed": {
+   "type": [
+    "integer",
+    "null"
+   ]
+  },
+  "validation_status": {
+   "type": "string"
+  },
+  "test_environment": {
+   "type": [
+    "string",
+    "null"
+   ]
+  }
+ }
+}

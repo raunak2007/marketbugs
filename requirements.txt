@@ -1,0 +1,9 @@
+numpy
+scipy
+jsonschema
+pyyaml
+pytest
+rank-bm25
+tokenizers
+huggingface_hub
+modal

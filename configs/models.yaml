@@ -1,7 +1,7 @@
 # Frozen probability agent + specialists. DECISION PENDING (PLAN 15.2): variant choice is the human's.
 # IDs and revisions verified via HF API on 2026-11-10.
 probability_agent:
-  hf_id: google/gemma-4-E4B-it          # PROVISIONAL until human confirms
+  hf_id: google/gemma-4-E4B-it          # DECIDED by human 2026-11-10
   revision: 4ecc2ba63bcac23ba4a767fc87025b1450f84c9c
   dtype: bfloat16
   label_prefix: " "                     # verified: ' A'..' T' each 1 token, and 'Answer:'+' X' splits cleanly

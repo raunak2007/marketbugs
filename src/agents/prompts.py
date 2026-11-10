@@ -28,13 +28,15 @@ def subset_agents(mask):
     return [a for i, a in enumerate(AGENTS) if mask >> i & 1]
 
 
-def probability_agent_prompt(view, notes_by_agent, mask):
+def probability_agent_prompt(view, notes_by_agent, mask, order=None):
     """C-mode prompt: issue, candidate block, notes in canonical order (absent omitted), answer cue
     (the cue itself is appended by the server after the chat template)."""
     present = subset_agents(mask)
+    if order is not None:  # E3 duplication / B_full5 cyclic permutations only
+        present = [a for a in order if a in present or a.split("#")[0] in present]
     notes = ""
     if present:
-        notes = "\n\nSpecialist notes:\n" + "\n".join(f"- {a}: {notes_by_agent[a]}" for a in present)
+        notes = "\n\nSpecialist notes:\n" + "\n".join(f"- {a.split('#')[0]}: {notes_by_agent[a]}" for a in present)
     issue = view["issue_text"] + (f"\n\nTraceback:\n{view['trace']}" if view.get("trace") else "")
     p = template("probability_agent").format(
         issue=issue, candidates=candidate_block(view), notes=notes, n=len(view["pool"]),

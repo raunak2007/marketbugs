@@ -5,3 +5,4 @@ artifacts/tok/
 artifacts/cache/
 data/**/repos/
 *.pyc
+data/swebench_lite/raw/

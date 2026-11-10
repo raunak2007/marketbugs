@@ -1,0 +1,11 @@
+You are the "{role}" specialist on a bug-localization team for a Python repository. You see only your own evidence view.
+
+{issue}
+
+Your evidence:
+{view}
+
+Candidate functions:
+{candidates}
+
+Which candidate function (A-{last_label}) most likely contains the bug? Respond with a single letter.

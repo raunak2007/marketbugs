@@ -72,3 +72,22 @@ def test_view_whitelist_excludes_eval_keys():
     v = inference_view(inst, cands)
     assert not any(k.startswith(("gold_", "mutation_")) for k in v)
     assert all(set(c) <= {"cid", "path", "qualname", "code", "retrieval_source", "retrieval_score"} for c in v["pool"])
+
+
+def test_inference_code_never_reads_gold_fields():
+    """Static scan: src/agents, src/llm, src/cands must not reference evaluator-only keys or the scorer."""
+    import re
+    from pathlib import Path
+    bad = re.compile(r"""["'](gold_functions|gold_in_pool|mutation_\w+|test_patch|FAIL_TO_PASS|PASS_TO_PASS)["']|src\.analysis\.score""")
+    allowed = {"src/agents/views.py", "src/cands/pool.py"}  # views: forbidden-key list; pool: attach_gold_flag (evaluator helper)
+    root = Path(__file__).resolve().parents[1]
+    hits = []
+    for d in ("src/agents", "src/llm", "src/cands"):
+        for p in (root / d).rglob("*.py"):
+            rel = str(p.relative_to(root))
+            if rel in allowed:
+                continue
+            for i, line in enumerate(p.read_text().splitlines(), 1):
+                if bad.search(line):
+                    hits.append(f"{rel}:{i}: {line.strip()}")
+    assert not hits, "\n".join(hits)

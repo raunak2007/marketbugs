@@ -6,11 +6,14 @@ VERIFY: Gemma 4 support in the pinned transformers version (checked in smoke()).
 """
 import modal, yaml, pathlib
 
-CFG = yaml.safe_load((pathlib.Path(__file__).resolve().parents[2] / "configs/models.yaml").read_text())
+_LOCAL_CFG = pathlib.Path(__file__).resolve().parent.parent.parent / "configs/models.yaml"
+_CFG_PATH = _LOCAL_CFG if _LOCAL_CFG.exists() else pathlib.Path("/root/configs/models.yaml")
+CFG = yaml.safe_load(_CFG_PATH.read_text())
 PA = CFG["probability_agent"]
 
 image = (modal.Image.debian_slim(python_version="3.11")
          .pip_install("torch==2.8.0", "transformers>=5.0", "accelerate", "numpy", "pyyaml")
+         .add_local_file(str(_LOCAL_CFG), "/root/configs/models.yaml")
          .add_local_python_source("src"))
 app = modal.App("emfl-gemma", image=image)
 hf_cache = modal.Volume.from_name("emfl-hf-cache", create_if_missing=True)
@@ -31,11 +34,12 @@ class Gemma:
         self.tok.padding_side = "left"
         self.model = AutoModelForCausalLM.from_pretrained(
             self.model_id, revision=self.revision, cache_dir="/cache",
-            torch_dtype=torch.bfloat16, device_map="cuda").eval()
+            dtype=torch.bfloat16, device_map="cuda").eval()
         enc = lambda s: self.tok.encode(s, add_special_tokens=False)
         self.mapping = resolve_labels(enc, 20)
         self.mhash = token_mapping_hash(self.mapping, self.model_id, self.revision)
-        self.versions = {"torch": torch.__version__, "transformers": transformers.__version__}
+        self.versions = {"torch": str(torch.__version__), "transformers": str(transformers.__version__)}
+        self.mapping = {k: ([int(x) for x in v] if k == "token_ids" else v) for k, v in self.mapping.items()}
 
     def _render(self, user_text):
         # Chat template, then open the model turn and end on the answer cue so the next token is the label.
@@ -85,7 +89,9 @@ class Gemma:
 
     @modal.method()
     def info(self):
-        return {"mapping": self.mapping, "token_mapping_hash": self.mhash, **self.versions}
+        import json
+        return json.loads(json.dumps({"mapping": self.mapping, "token_mapping_hash": self.mhash,
+                                      "model_class": type(self.model).__name__, **self.versions}))
 
 
 @app.local_entrypoint()
@@ -102,3 +108,19 @@ def smoke():
         p = np.array(ra["probs"])
         print(k, "top1", chr(65 + int(p.argmax())), "p=%.3f" % p.max(), "sum=%.6f" % p.sum(),
               "maxdiff_rerun=%.2e" % np.abs(p - np.array(rb["probs"])).max())
+
+
+EMB_MODEL, EMB_REV = "BAAI/bge-small-en-v1.5", "main"  # VERIFY: pin revision sha before G2
+emb_image = modal.Image.debian_slim(python_version="3.11").pip_install("sentence-transformers", "torch==2.8.0")
+
+
+@app.cls(gpu="T4", image=emb_image, volumes={"/cache": hf_cache}, scaledown_window=120)
+class Embedder:
+    @modal.enter()
+    def load(self):
+        from sentence_transformers import SentenceTransformer
+        self.m = SentenceTransformer(EMB_MODEL, revision=EMB_REV, cache_folder="/cache")
+
+    @modal.method()
+    def embed(self, texts: list[str]):
+        return self.m.encode(texts, batch_size=64, normalize_embeddings=True).tolist()

@@ -1,0 +1,93 @@
+✓ Initialized. View run at 
+https://modal.com/apps/rmondal/main/ap-1mskDHnUa7xJvmge2kktUH
+✓ Created objects.
+├── ✓ Uploaded /Users/raunakmondal/Downloads/project/src/llm/modal_server.py
+├── ✓ Uploaded /Users/raunakmondal/Downloads/project/configs/models.yaml
+├── ✓ Uploaded PythonPackage:src
+└── ✓ Created Function Gemma.*.
+
+[1ALoading weights:   0%|          | 0/2076 [00:00<?, ?it/s]
+[1ALoading weights:   7%|▋         | 143/2076 [00:00<00:01, 1418.96it/s]
+[1ALoading weights:  15%|█▍        | 303/2076 [00:00<00:01, 1425.99it/s]
+[1ALoading weights:  22%|██▏       | 454/2076 [00:00<00:01, 1407.73it/s]
+[1ALoading weights:  29%|██▉       | 607/2076 [00:00<00:01, 1446.47it/s]
+[1ALoading weights:  36%|███▌      | 752/2076 [00:01<00:03, 423.32it/s] 
+[1ALoading weights:  41%|████      | 852/2076 [00:03<00:10, 117.37it/s]
+[1ALoading weights:  44%|████▍     | 919/2076 [00:04<00:08, 131.59it/s]
+[1ALoading weights:  47%|████▋     | 973/2076 [00:04<00:07, 144.63it/s]
+[1ALoading weights:  49%|████▉     | 1018/2076 [00:04<00:06, 155.74it/s]
+[1ALoading weights:  51%|█████     | 1057/2076 [00:04<00:06, 168.51it/s]
+[1ALoading weights:  53%|█████▎    | 1094/2076 [00:04<00:05, 188.72it/s]
+[1ALoading weights:  54%|█████▍    | 1130/2076 [00:04<00:04, 200.38it/s]
+[1ALoading weights:  56%|█████▌    | 1163/2076 [00:05<00:04, 213.83it/s]
+[1ALoading weights:  58%|█████▊    | 1195/2076 [00:05<00:04, 218.18it/s]
+[1ALoading weights:  59%|█████▉    | 1224/2076 [00:05<00:03, 219.24it/s]
+[1ALoading weights:  60%|██████    | 1251/2076 [00:05<00:03, 225.76it/s]
+[1ALoading weights:  62%|██████▏   | 1279/2076 [00:05<00:03, 227.38it/s]
+[1ALoading weights:  63%|██████▎   | 1308/2076 [00:05<00:03, 237.86it/s]
+[1ALoading weights:  64%|██████▍   | 1334/2076 [00:05<00:03, 239.32it/s]
+[1ALoading weights:  66%|██████▌   | 1360/2076 [00:05<00:03, 234.32it/s]
+[1ALoading weights:  67%|██████▋   | 1387/2076 [00:05<00:02, 240.44it/s]
+[1ALoading weights:  68%|██████▊   | 1417/2076 [00:06<00:02, 251.79it/s]
+[1ALoading weights:  83%|████████▎ | 1732/2076 [00:06<00:00, 1042.96it/s]
+[1ALoading weights: 100%|██████████| 2076/2076 [00:06<00:00, 331.82it/s] 
+{
+ "mapping": {
+  "scheme": "letters",
+  "prefix": " ",
+  "labels": [
+   "A",
+   "B",
+   "C",
+   "D",
+   "E",
+   "F",
+   "G",
+   "H",
+   "I",
+   "J",
+   "K",
+   "L",
+   "M",
+   "N",
+   "O",
+   "P",
+   "Q",
+   "R",
+   "S",
+   "T"
+  ],
+  "token_ids": [
+   562,
+   603,
+   565,
+   622,
+   645,
+   633,
+   667,
+   640,
+   564,
+   730,
+   751,
+   639,
+   587,
+   646,
+   708,
+   593,
+   1366,
+   630,
+   555,
+   558
+  ]
+ },
+ "token_mapping_hash": "60e8077ec8db6a85",
+ "model_class": "Gemma4ForConditionalGeneration",
+ "torch": "2.8.0+cu128",
+ "transformers": "5.22.2"
+}
+3 top1 D p=1.000 sum=1.000000 maxdiff_rerun=0.00e+00
+11 top1 L p=1.000 sum=1.000000 maxdiff_rerun=0.00e+00
+17 top1 R p=1.000 sum=1.000000 maxdiff_rerun=0.00e+00
+Stopping app - local entrypoint completed.
+✓ App completed. View run at 
+https://modal.com/apps/rmondal/main/ap-1mskDHnUa7xJvmge2kktUH

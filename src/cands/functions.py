@@ -1,5 +1,8 @@
 """Function index for a checked-out repo via `ast` (no imports, no execution)."""
-import ast, re
+import ast, re, sys
+
+sys.setrecursionlimit(max(sys.getrecursionlimit(), 20000))
+SKIPPED_FILES = []  # (relpath, reason) for files that could not be indexed; reported in build logs
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -67,9 +70,12 @@ def index_repo(root, include_tests=False):
         try:
             src = p.read_text(encoding="utf-8")
             tree = ast.parse(src)
-        except (SyntaxError, UnicodeDecodeError, ValueError):
-            continue
-        v = _V(rel, src.splitlines()); v.visit(tree); fns.extend(v.fns)
+        except (SyntaxError, UnicodeDecodeError, ValueError, RecursionError) as e:
+            SKIPPED_FILES.append((rel, type(e).__name__)); continue
+        try:
+            v = _V(rel, src.splitlines()); v.visit(tree); fns.extend(v.fns)
+        except RecursionError:
+            SKIPPED_FILES.append((rel, "recursion"))
     return fns
 
 

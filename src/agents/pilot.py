@@ -1,122 +1,109 @@
-"""G1 pilot (PLAN 11 Phase 1): pools -> notes -> 32-subset C tables on N dev instances, then score
-(evaluator side, after inference) and extrapolate cost.
+"""Dev runs (G1 pilot, G2 fitting data) via src.agents.pipeline. INFERENCE SIDE.
 
-python -m src.agents.pilot data/marketbugs/dev/<repo>.jsonl [--n 30]
+python -m src.agents.pilot <instances.jsonl> --tag <name> [--n 30] [--cond test_informed|no_trace|both]
+                           [--max-usd X] [--no-extras]
+
+Writes artifacts/runs/<tag>/<cond>/{candidates_inf,notes,values_inf,k10,telemetry,raw_notes}.jsonl, appending one
+instance at a time (crash-safe; rerunning the same tag resumes, skipping finished ids). Gold is attached later by
+src.analysis.attach_gold. Refuses non-dev instances (no test outcomes before the G2 freeze).
 """
-import json, sys, time, random
+import json, sys, time, threading, _thread
 from pathlib import Path
 import numpy as np
 import modal
-from src.agents.views import inference_view
-from src.agents.evidence import build_evidence
-from src.agents.specialists import specialist_prompt, parse_note
-from src.agents.prompts import AGENTS, template_hash
-from src.agents.run_values import value_rows_for_instance, GPU_USD_PER_S
+from src.agents.pipeline import run_instance
+from src.agents.run_values import GPU_USD_PER_S
 from src.cands.functions import index_repo
-from src.cands.retrieval import BM25, Embedding, Graph, frame_functions
-from src.cands.pool import build_pool
+from src.cands.retrieval import BM25, Embedding, Graph
 from src.llm.hashing import sha
 
 ROOT = Path(__file__).resolve().parents[2]
 ART = ROOT / "artifacts"
 
-
-class _Srv:
-    def __init__(self):
-        G = modal.Cls.from_name("emfl-gemma", "Gemma")()
-        self.g = G
-        self.label_logits = lambda p, n: G.label_logits.remote(p, n)
-        self.generate = lambda p, **kw: G.generate.remote(p, **kw)
-
-
-# Hard budget guard (human cap 2026-11-10: pilot < $10.79). Conservative: bill BOTH GPUs (A10G + T4 embedder)
-# for the whole wall time, +15% for Modal CPU/memory, and keep a reserve for one hung call / scaledown.
+# Hard budget guard (human cap 2026-11-10). Conservative: bill BOTH GPUs (A10G + T4 embedder) for the whole wall
+# time, +15% for Modal CPU/memory, and keep a reserve for one hung call / scaledown.
 T4_USD_PER_S = 0.59 / 3600
 BURN_USD_PER_S = (GPU_USD_PER_S + T4_USD_PER_S) * 1.15
 RESERVE_USD = 2.0
 STALL_S = 15 * 60
+KINDS = ("candidates_inf", "notes", "values_inf", "k10", "telemetry", "raw_notes")
 
 
-def run(path, n, emb, max_usd=10.79):
+class _Srv:
+    def __init__(self):
+        G = modal.Cls.from_name("emfl-gemma", "Gemma")()
+        self.label_logits = lambda p, n: G.label_logits.remote(p, n)
+        self.generate = lambda p, **kw: G.generate.remote(p, **kw)
+
+
+def _done_ids(d):
+    p = d / "candidates_inf.jsonl"
+    return {json.loads(l)["id"] for l in open(p)} if p.exists() else set()
+
+
+def run(path, tag, n, conds, emb, srv, max_usd, extras=True):
     rows = [json.loads(l) for l in open(path)][:n]
-    srv = _Srv()
-    repo_cache = {}
-    out_c, out_n, out_v = [], [], []
-    t_start = time.time()
-    done, stopped = 0, None
-    # Watchdog: the budget guard only runs between instances; a remote call that never returns (e.g. a container
-    # crash-looping at startup) would otherwise hang forever. Abort if one instance exceeds STALL_S.
-    import threading, _thread
-    state = {"t": time.time(), "fired": False}
+    bad = [r["id"] for r in rows if r.get("split") not in ("dev", None) and r["source"] == "marketbugs"]
+    if bad:
+        sys.exit(f"refusing non-dev instances before G2 freeze: {bad[:3]}...")
+    repo_cache, t_start, done = {}, time.time(), 0
+    state = {"t": time.time(), "fired": False, "end": False}
+    stopped = None
 
     def _watch():
-        while done < len(rows) and not state.get("end"):
+        while not state["end"]:
             if time.time() - state["t"] > STALL_S:
                 state["fired"] = True; print(f"STOP watchdog: no progress in {STALL_S}s", flush=True)
                 _thread.interrupt_main(); return
             time.sleep(5)
     threading.Thread(target=_watch, daemon=True).start()
+    todo = [(inst, c) for c in conds for inst in rows]
     try:
-      for inst in rows:
-        state["t"] = time.time()
-        spent = (time.time() - t_start) * BURN_USD_PER_S
-        per = spent / done if done else 0.0
-        if spent + max(per, 0.0) * 1.5 + RESERVE_USD > max_usd:
-            stopped = f"budget guard: spent~${spent:.2f}, next~${per:.2f}, reserve ${RESERVE_USD}, cap ${max_usd}"
-            print("STOP", stopped, flush=True); break
-        repo_dir = ROOT / "data/marketbugs/repos" / inst["repo"]
-        if inst["repo"] not in repo_cache:
-            fns = index_repo(repo_dir)
-            repo_cache[inst["repo"]] = (fns, BM25(fns), Embedding(fns, emb), Graph(fns))
-        fns, bm, em, gr = repo_cache[inst["repo"]]
-        q = inst["conditions"]["test_informed"]  # inference input only
-        frames = frame_functions(fns, inst["trace"], repo_dir)
-        cands = build_pool(inst["id"], {"bm25": bm.rank(q, 40), "emb": em.rank(q, 40), "graph": gr.rank(frames, 40)},
-                           20, order_seed=int(sha(inst["id"]), 16) % 10**6)
-        view = inference_view(inst, cands, "test_informed")
-        sem = dict(zip([c["cid"] for c in view["pool"]],
-                       (np.array(emb([c["code"][:2000] for c in view["pool"]])) @ np.array(emb([q[:2000]])[0])).tolist()))
-        ev = build_evidence(view, fns, gr, sem, repo_dir)
-        prompts = [specialist_prompt(a, view, ev) for a in AGENTS]
-        gens = srv.generate(prompts, max_new_tokens=150, temperature=0.0, seed=0)
-        notes = {}
-        for a, p, g in zip(AGENTS, prompts, gens):
-            canon, ranked = parse_note(g["text"], view)
-            if canon is None:  # retry once at temperature 0 (deterministic; logged), then empty
-                g = srv.generate([p + "\n\nRemember: first line must be 'RANKED: X,Y,...'"], max_new_tokens=150)[0]
-                canon, ranked = parse_note(g["text"], view)
-            notes[a] = canon or "(no usable note)"
-            out_n.append({"id": inst["id"], "agent": a, "copy_idx": 0, "text": canon or "", "raw_text": g["text"],
-                          "ranked_suspects": ranked, "prompt_hash": sha(p), "template_hash": template_hash("specialist"),
-                          "model_revision": g["model_revision"], "temperature": 0.0, "seed": 0,
-                          "input_tokens": g["input_tokens"], "output_tokens": g["output_tokens"], "latency_ms": g["latency_ms"]})
-        vr = value_rows_for_instance(view, notes, srv)
-        out_c.append(cands); out_v += vr
-        print(inst["id"], "done", flush=True)
-        done += 1
-        print(f"  ~${(time.time() - t_start) * BURN_USD_PER_S:.2f} so far (conservative)", flush=True)
+        for inst, cond in todo:
+            d = ART / "runs" / tag / cond; d.mkdir(parents=True, exist_ok=True)
+            if inst["id"] in _done_ids(d):
+                continue
+            state["t"] = time.time()
+            spent = (time.time() - t_start) * BURN_USD_PER_S
+            per = spent / done if done else 0.0
+            if spent + per * 1.5 + RESERVE_USD > max_usd:
+                stopped = f"budget guard: spent~${spent:.2f}, next~${per:.2f}, reserve ${RESERVE_USD}, cap ${max_usd}"
+                print("STOP", stopped, flush=True); break
+            repo_dir = ROOT / "data/marketbugs/repos" / inst["repo"]
+            if inst["repo"] not in repo_cache:
+                fns = index_repo(repo_dir)
+                repo_cache[inst["repo"]] = (fns, BM25(fns), Embedding(fns, emb), Graph(fns), repo_dir)
+            out = run_instance(inst, cond, repo_cache[inst["repo"]], emb, srv, extras=extras)
+            out["candidates_inf"], out["values_inf"] = out.pop("candidates"), out.pop("values")
+            out["raw_notes"] = [{"id": inst["id"], "agent": a, "raw_text": t} for a, t in out["raw_notes"].items()]
+            for k in KINDS:  # candidates_inf last-written => marks the instance done only if all others landed
+                data = out[k] if isinstance(out[k], list) else [out[k]]
+                if k != "candidates_inf":
+                    with open(d / f"{k}.jsonl", "a") as f:
+                        f.write("".join(json.dumps(r) + "\n" for r in data))
+            with open(d / "candidates_inf.jsonl", "a") as f:
+                f.write(json.dumps(out["candidates_inf"]) + "\n")
+            done += 1
+            tel = out["telemetry"]
+            print(f"{inst['id']} [{cond}] done: {len(tel)} calls, {sum(t['input_tokens'] for t in tel)} in-tok, "
+                  f"~${(time.time() - t_start) * BURN_USD_PER_S:.2f} so far (conservative)", flush=True)
     except KeyboardInterrupt:
         stopped = stopped or ("watchdog stall" if state["fired"] else "interrupted")
     finally:
-      state["end"] = True
-      _finish(path, rows[:done], out_c[:done], [x for x in out_n if x["id"] in {c["id"] for c in out_c[:done]}],
-              [x for x in out_v if x["id"] in {c["id"] for c in out_c[:done]}], t_start, stopped)
+        state["end"] = True
+        wall = time.time() - t_start
+        with open(ART / "costs.jsonl", "a") as f:
+            f.write(json.dumps({"job": f"run {tag}", "conds": conds, "n": done, "wall_s": wall,
+                                "est_usd": wall * GPU_USD_PER_S, "conservative_usd": wall * BURN_USD_PER_S,
+                                "stopped": stopped}) + "\n")
+        print(f"run {tag}: {done} instance-conditions, wall {wall:.0f}s, conservative ${wall * BURN_USD_PER_S:.2f}")
 
 
-def _finish(path, rows, out_c, out_n, out_v, t_start, stopped):
-    wall = time.time() - t_start
-    tag = Path(path).stem
-    for name, data in (("candidates", out_c), ("notes", out_n), ("values_C", out_v)):
-        (ART / f"pilot_{tag}_{name}.jsonl").write_text("".join(json.dumps(r) + "\n" for r in data))
-    cost = wall * GPU_USD_PER_S
-    with open(ART / "costs.jsonl", "a") as f:
-        f.write(json.dumps({"job": f"pilot {tag}", "n": len(rows), "wall_s": wall, "est_usd": cost,
-                            "conservative_usd": wall * BURN_USD_PER_S, "stopped": stopped}) + "\n")
-    print(f"pilot {tag}: {len(rows)} instances, wall {wall:.0f}s, est ${cost:.2f}")
+def _arg(name, default):
+    return sys.argv[sys.argv.index(name) + 1] if name in sys.argv else default
 
 
 if __name__ == "__main__":
-    n = int(sys.argv[sys.argv.index("--n") + 1]) if "--n" in sys.argv else 30
     E = modal.Cls.from_name("emfl-gemma", "Embedder")()
     cache = {}
 
@@ -126,5 +113,7 @@ if __name__ == "__main__":
             for t, v in zip(miss[i:i + 512], E.embed.remote(miss[i:i + 512])):
                 cache[sha(t)] = v
         return np.array([cache[sha(t)] for t in texts])
-    cap = float(sys.argv[sys.argv.index("--max-usd") + 1]) if "--max-usd" in sys.argv else 10.79
-    run(sys.argv[1], n, emb, cap)
+    c = _arg("--cond", "test_informed")
+    run(sys.argv[1], _arg("--tag", Path(sys.argv[1]).stem), int(_arg("--n", 30)),
+        ["test_informed", "no_trace"] if c == "both" else [c], emb, _Srv(), float(_arg("--max-usd", 10.79)),
+        extras="--no-extras" not in sys.argv)

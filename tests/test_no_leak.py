@@ -4,6 +4,9 @@ import json, pytest
 from src.agents.views import inference_view, INSTANCE_ALLOWED
 from src.agents.prompts import probability_agent_prompt, AGENTS
 from tests.fixtures import make_instance
+from src.agents.evidence import build_evidence
+from src.agents.specialists import specialist_prompt, forecaster_prompt
+from src.market.sequential import market_prompt
 
 EVAL_FIELDS = ("gold_functions", "mutation_operator", "mutation_span", "patch", "test_patch", "FAIL_TO_PASS", "generation_seed")
 
@@ -38,7 +41,13 @@ def all_prompts(inst, cands):
         notes = {a: f"note from {a}" for a in AGENTS}
         for mask in range(32):
             yield probability_agent_prompt(view, notes, mask)[0]
-    # VERIFY: extend with specialist / forecaster / market builders as they are added.
+        # specialist, forecaster and market builders (extended 2026-11-10)
+        ev = build_evidence(view)
+        for a in AGENTS:
+            yield specialist_prompt(a, view, ev)
+            yield forecaster_prompt(a, view, ev)
+            market = {c["cid"]: 1.0 / len(view["pool"]) for c in view["pool"]}
+            yield market_prompt(view, a, notes[a], market)
 
 
 @pytest.mark.parametrize("source", ["marketbugs", "swebench_lite"])

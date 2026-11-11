@@ -49,24 +49,45 @@ class Gemma:
         return prefix + ANSWER_CUE
 
     @modal.method()
-    def label_logits(self, prompts: list[str], n_candidates: list[int], batch_size: int = 8):
+    def label_logits(self, prompts: list[str], n_candidates: list[int], batch_size: int = 8,
+                     max_padded_tokens: int = 24000):
+        """Batches are capped by size AND by padded tokens (batch x longest prompt): a fixed batch of 8 OOMed on
+        A10G once prompts passed ~4k tokens. Chunking is a deterministic function of the inputs. If a chunk still
+        OOMs it is re-run one prompt at a time. VERIFY: bf16 logits can differ in low bits across batch shapes."""
         import torch, time
         from src.llm.extraction import extract
-        out = []
-        for i in range(0, len(prompts), batch_size):
-            chunk = [self._render(p) for p in prompts[i:i + batch_size]]
-            t0 = time.time()
-            enc = self.tok(chunk, return_tensors="pt", padding=True, add_special_tokens=False).to("cuda")
+        rendered = [self._render(p) for p in prompts]
+        lens = [len(self.tok(r, add_special_tokens=False)["input_ids"]) for r in rendered]
+        chunks, cur = [], []
+        for i in range(len(rendered)):
+            if cur and (len(cur) >= batch_size or (len(cur) + 1) * max(lens[k] for k in cur + [i]) > max_padded_tokens):
+                chunks.append(cur); cur = []
+            cur.append(i)
+        if cur:
+            chunks.append(cur)
+
+        def fwd(idx):
+            enc = self.tok([rendered[k] for k in idx], return_tensors="pt", padding=True, add_special_tokens=False).to("cuda")
             with torch.no_grad():
                 # last position only: full-seq x 262k-vocab logits OOM on A10G
-                logits = self.model(**enc, logits_to_keep=1).logits[:, -1, :].float().cpu().numpy()
-            dt = (time.time() - t0) * 1000 / len(chunk)
-            for j, row in enumerate(logits):
-                raw, probs = extract(row, self.mapping, n_candidates[i + j])
-                out.append({"raw": raw.tolist(), "probs": probs.tolist(),
-                            "input_tokens": int(enc["attention_mask"][j].sum()), "latency_ms": dt,
-                            "token_mapping_hash": self.mhash, "model_revision": f"{self.model_id}@{self.revision}"})
-        return out
+                lg = self.model(**enc, logits_to_keep=1).logits[:, -1, :].float().cpu().numpy()
+            return lg, enc["attention_mask"].sum(1).tolist()
+
+        res = {}
+        for idx in chunks:
+            t0 = time.time()
+            try:
+                parts = [(idx, *fwd(idx))]
+            except torch.OutOfMemoryError:
+                torch.cuda.empty_cache()
+                parts = [([k], *fwd([k])) for k in idx]
+            dt = (time.time() - t0) * 1000 / len(idx)
+            for sub, lg, ntok in parts:
+                for j, k in enumerate(sub):
+                    raw, probs = extract(lg[j], self.mapping, n_candidates[k])
+                    res[k] = {"raw": raw.tolist(), "probs": probs.tolist(), "input_tokens": int(ntok[j]), "latency_ms": dt,
+                              "token_mapping_hash": self.mhash, "model_revision": f"{self.model_id}@{self.revision}"}
+        return [res[k] for k in range(len(prompts))]
 
     @modal.method()
     def generate(self, prompts: list[str], max_new_tokens: int = 150, temperature: float = 0.0, seed: int = 0):

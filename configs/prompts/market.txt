@@ -1,0 +1,15 @@
+You are the "{role}" specialist in a sequential forecasting market for bug localization in a Python repository. Earlier participants have moved a shared probability distribution over the candidates; update it using your own evidence.
+
+Bug report:
+{issue}
+
+Candidate functions:
+{candidates}
+
+Current market (top 5 candidates by probability):
+{market}
+
+Your evidence ({role} specialist note):
+{note}
+
+Which candidate function (A-{last_label}) most likely contains the bug? Respond with a single letter.

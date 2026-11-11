@@ -1,6 +1,7 @@
 """Prompt builders. Templates live in configs/prompts/*.txt; their hashes go into every row."""
 from pathlib import Path
 from src.llm.hashing import sha
+from src.llm.tokens import truncate_code
 
 PROMPT_DIR = Path(__file__).resolve().parents[2] / "configs" / "prompts"
 AGENTS = ("trace", "graph", "spec", "static", "semantic")  # canonical order; bit i = 1<<i
@@ -15,11 +16,11 @@ def template_hash(name):
     return sha(template(name))
 
 
-def candidate_block(view, code_char_budget=1200):
-    # VERIFY: switch to a token budget once the tokenizer is pinned at G2 (same budget for every method).
+def candidate_block(view):
+    """Same block for every method; code truncated to the fixed token budget (src.llm.tokens, PLAN 4.2)."""
     parts = []
     for lab, c in zip(LABELS, view["pool"]):
-        code = c["code"] if len(c["code"]) <= code_char_budget else c["code"][:code_char_budget] + "\n# ...truncated"
+        code = truncate_code(c["code"])
         parts.append(f"[{lab}] {c['path']} :: {c['qualname']}\n{code}")
     return "\n\n".join(parts)
 
@@ -37,7 +38,9 @@ def probability_agent_prompt(view, notes_by_agent, mask, order=None):
     notes = ""
     if present:
         notes = "\n\nSpecialist notes:\n" + "\n".join(f"- {a.split('#')[0]}: {notes_by_agent[a]}" for a in present)
-    issue = view["issue_text"] + (f"\n\nTraceback:\n{view['trace']}" if view.get("trace") else "")
+    # issue_text already carries the traceback in the test_informed condition (and none in no_trace / SWE-bench);
+    # appending view["trace"] again showed it twice (fixed pre-freeze 2026-11-10).
+    issue = view["issue_text"]
     p = template("probability_agent").format(
         issue=issue, candidates=candidate_block(view), notes=notes, n=len(view["pool"]),
         last_label=LABELS[len(view["pool"]) - 1])

@@ -16,8 +16,9 @@ def label_maps(view):
     return lab2cid, {v: k for k, v in lab2cid.items()}
 
 
-def _issue(view, with_trace=True):
-    return view["issue_text"] + (f"\n\nTraceback:\n{view['trace']}" if with_trace and view.get("trace") else "")
+def _issue(view):
+    """issue_text already includes the traceback in test_informed; never append view['trace'] again."""
+    return view["issue_text"]
 
 
 def view_text(agent, view, ev):
@@ -27,7 +28,7 @@ def view_text(agent, view, ev):
         if view["source"] == "swebench_lite":
             return "Issue (no traceback available):\n" + view["issue_text"]
         rows = [f"  {f['path']}:{f['line']} in {f['fn']}" + (f" -> candidate {L(f['cid'])}" if f["cid"] else " (not a candidate)") for f in ev["frames"]]
-        return _issue(view, False) + "\n\nTraceback frames mapped to candidates:\n" + ("\n".join(rows) or "  (none)")
+        return _issue(view) + "\n\nTraceback frames mapped to candidates:\n" + ("\n".join(rows) or "  (none)")
     if agent == "graph":
         fr = [f for f in ev["frames"] if f["cid"]]
         lines = [f"  frame candidate {L(f['cid'])}: neighbors " + (", ".join(L(n) for n in ev["neighbors"].get(f["cid"], [])) or "none") for f in fr]

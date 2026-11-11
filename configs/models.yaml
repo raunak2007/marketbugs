@@ -10,3 +10,7 @@ alternatives:
 modal:
   gpu: A10G        # VERIFY: E4B bf16 fits 24GB with 32-prompt batches at our context length
   max_spend_usd_before_G3: 45
+prompting:
+  # PLAN 4.2 fixed token budget per candidate (pinned Gemma tokenizer). 300 matches the old 1200-char budget on the
+  # pilot pools (mean kept 126.9 vs 126.3 tokens; truncated 12.5% vs 13.5%), so cost is unchanged. Set 2026-11-10.
+  code_token_budget: 300

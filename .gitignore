@@ -9,3 +9,4 @@ data/swebench_lite/raw/
 .claude/settings.local.json
 artifacts/scratch_*
 artifacts/pilot_dev30.log
+artifacts/eod_push.err

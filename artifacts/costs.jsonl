@@ -7,3 +7,4 @@
 {"job": "pilot pilot_dev30", "n": 0, "wall_s": 14.828376054763794, "est_usd": 0.004530892683400049, "conservative_usd": 0.008005263572898175, "stopped": "interrupted"}
 {"job": "pilot pilot_dev30", "n": 10, "wall_s": 756.1092557907104, "est_usd": 0.23103338371382823, "conservative_usd": 0.40819398295256826, "stopped": null}
 {"job": "pilot pilot_dev30_part2", "n": 10, "wall_s": 1066.6799490451813, "est_usd": 0.3259299844304721, "conservative_usd": 0.5758590224914749, "stopped": "interrupted"}
+{"job": "run dev120", "conds": ["test_informed"], "n": 30, "wall_s": 4025.1040031909943, "est_usd": 1.2298928898639152, "conservative_usd": 2.1729971195004714, "stopped": null}

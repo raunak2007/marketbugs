@@ -1,7 +1,8 @@
 """Dev runs (G1 pilot, G2 fitting data) via src.agents.pipeline. INFERENCE SIDE.
 
 python -m src.agents.pilot <instances.jsonl> --tag <name> [--n 30] [--cond test_informed|no_trace|both]
-                           [--max-usd X] [--no-extras]
+                           [--max-usd X] [--no-extras] [--protocol single|avg2] [--reuse-notes-from <tag>]
+                           [--skip K]
 
 Writes artifacts/runs/<tag>/<cond>/{candidates_inf,notes,values_inf,k10,telemetry,raw_notes}.jsonl, appending one
 instance at a time (crash-safe; rerunning the same tag resumes, skipping finished ids). Gold is attached later by
@@ -24,7 +25,7 @@ ART = ROOT / "artifacts"
 # time, +15% for Modal CPU/memory, and keep a reserve for one hung call / scaledown.
 T4_USD_PER_S = 0.59 / 3600
 BURN_USD_PER_S = (GPU_USD_PER_S + T4_USD_PER_S) * 1.15
-RESERVE_USD = 2.0
+RESERVE_USD = 1.0  # lowered from 2.0: conservative estimate matched Modal billing ($3.39 est vs $3.35 billed)
 STALL_S = 15 * 60
 KINDS = ("candidates_inf", "notes", "values_inf", "k10", "telemetry", "raw_notes")
 
@@ -41,8 +42,22 @@ def _done_ids(d):
     return {json.loads(l)["id"] for l in open(p)} if p.exists() else set()
 
 
-def run(path, tag, n, conds, emb, srv, max_usd, extras=True):
-    rows = [json.loads(l) for l in open(path)][:n]
+PROTOCOLS = {"single": (0,), "avg2": (0, 1)}  # avg2 adopted at G1 (order sensitivity 25.7% > 15%)
+
+
+def run(path, tag, n, conds, emb, srv, max_usd, extras=True, protocol="single", reuse_from=None, skip=0):
+    rows = [json.loads(l) for l in open(path)][skip:skip + n]
+    perms = PROTOCOLS[protocol]
+    reuse, reuse_c = {}, {}
+    for c in conds:
+        cp = ART / "runs" / (reuse_from or "") / c / "candidates_inf.jsonl"
+        if reuse_from and cp.exists():
+            for l in open(cp):
+                r = json.loads(l); reuse_c[(c, r["id"])] = r
+        rp = ART / "runs" / (reuse_from or "") / c / "notes.jsonl"
+        if reuse_from and rp.exists():
+            for l in open(rp):
+                r = json.loads(l); reuse.setdefault((c, r["id"]), {})[r["agent"]] = r
     bad = [r["id"] for r in rows if r.get("split") not in ("dev", None) and r["source"] == "marketbugs"]
     if bad:
         sys.exit(f"refusing non-dev instances before G2 freeze: {bad[:3]}...")
@@ -58,13 +73,26 @@ def run(path, tag, n, conds, emb, srv, max_usd, extras=True):
             time.sleep(5)
     threading.Thread(target=_watch, daemon=True).start()
     todo = [(inst, c) for c in conds for inst in rows]
+    # Embed everything a run needs up front (repo function texts, candidate code, condition queries) so the T4
+    # embedder is used for minutes, not the whole run. Same texts and model as the per-instance calls.
+    from src.cands.retrieval import fn_text
+    from src.agents.pipeline import condition_query
+    for repo in sorted({r["repo"] for r in rows}):
+        repo_dir = ROOT / "data/marketbugs/repos" / repo
+        fns = index_repo(repo_dir)
+        texts = [fn_text(f)[:2000] for f in fns] + [f.code[:2000] for f in fns]
+        texts += [condition_query(r, c)[0][:2000] for r in rows if r["repo"] == repo for c in conds]
+        emb(list(dict.fromkeys(texts)))
+        print(f"embedded {repo}: {len(set(texts))} texts", flush=True)
+    t4_s = (time.time() - t_start) + 120  # embedder active during precompute + its 120 s scaledown window
+    spend = lambda: (time.time() - t_start) * GPU_USD_PER_S * 1.15 + t4_s * T4_USD_PER_S * 1.15
     try:
         for inst, cond in todo:
             d = ART / "runs" / tag / cond; d.mkdir(parents=True, exist_ok=True)
             if inst["id"] in _done_ids(d):
                 continue
             state["t"] = time.time()
-            spent = (time.time() - t_start) * BURN_USD_PER_S
+            spent = spend()
             per = spent / done if done else 0.0
             if spent + per * 1.5 + RESERVE_USD > max_usd:
                 stopped = f"budget guard: spent~${spent:.2f}, next~${per:.2f}, reserve ${RESERVE_USD}, cap ${max_usd}"
@@ -73,7 +101,10 @@ def run(path, tag, n, conds, emb, srv, max_usd, extras=True):
             if inst["repo"] not in repo_cache:
                 fns = index_repo(repo_dir)
                 repo_cache[inst["repo"]] = (fns, BM25(fns), Embedding(fns, emb), Graph(fns), repo_dir)
-            out = run_instance(inst, cond, repo_cache[inst["repo"]], emb, srv, extras=extras)
+            nov = reuse.get((cond, inst["id"]))
+            ok = bool(nov) and len(nov) == 5 and (cond, inst["id"]) in reuse_c
+            out = run_instance(inst, cond, repo_cache[inst["repo"]], emb, srv, extras=extras, perms=perms,
+                               notes_override=nov if ok else None, cands_override=reuse_c[(cond, inst["id"])] if ok else None)
             out["candidates_inf"], out["values_inf"] = out.pop("candidates"), out.pop("values")
             out["raw_notes"] = [{"id": inst["id"], "agent": a, "raw_text": t} for a, t in out["raw_notes"].items()]
             for k in KINDS:  # candidates_inf last-written => marks the instance done only if all others landed
@@ -86,15 +117,16 @@ def run(path, tag, n, conds, emb, srv, max_usd, extras=True):
             done += 1
             tel = out["telemetry"]
             print(f"{inst['id']} [{cond}] done: {len(tel)} calls, {sum(t['input_tokens'] for t in tel)} in-tok, "
-                  f"~${(time.time() - t_start) * BURN_USD_PER_S:.2f} so far (conservative)", flush=True)
+                  f"~${spend():.2f} so far (A10G wall + T4 precompute, +15%)", flush=True)
     except KeyboardInterrupt:
         stopped = stopped or ("watchdog stall" if state["fired"] else "interrupted")
     finally:
         state["end"] = True
         wall = time.time() - t_start
         with open(ART / "costs.jsonl", "a") as f:
-            f.write(json.dumps({"job": f"run {tag}", "conds": conds, "n": done, "wall_s": wall,
-                                "est_usd": wall * GPU_USD_PER_S, "conservative_usd": wall * BURN_USD_PER_S,
+            f.write(json.dumps({"job": f"run {tag}", "conds": conds, "protocol": protocol, "n": done, "wall_s": wall,
+                                "est_usd": wall * GPU_USD_PER_S,
+                                "conservative_usd": spend() if "spend" in dir() else wall * BURN_USD_PER_S,
                                 "stopped": stopped}) + "\n")
         print(f"run {tag}: {done} instance-conditions, wall {wall:.0f}s, conservative ${wall * BURN_USD_PER_S:.2f}")
 
@@ -116,4 +148,5 @@ if __name__ == "__main__":
     c = _arg("--cond", "test_informed")
     run(sys.argv[1], _arg("--tag", Path(sys.argv[1]).stem), int(_arg("--n", 30)),
         ["test_informed", "no_trace"] if c == "both" else [c], emb, _Srv(), float(_arg("--max-usd", 10.79)),
-        extras="--no-extras" not in sys.argv)
+        extras="--no-extras" not in sys.argv, protocol=_arg("--protocol", "single"),
+        reuse_from=_arg("--reuse-notes-from", None), skip=int(_arg("--skip", 0)))

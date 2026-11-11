@@ -21,7 +21,7 @@ from src.agents.prompts import AGENTS, probability_agent_prompt, template_hash
 from src.agents.run_values import permuted_view, GPU_USD_PER_S
 from src.cands.retrieval import frame_functions
 from src.cands.pool import build_pool
-from src.market.sequential import run_market
+from src.market.sequential import run_market, avg_logprob
 from src.llm.hashing import sha
 
 ORDER_CHECK_MASKS = (0, 1, 2, 4, 8, 16, 31)   # PLAN 4.3: p_empty, singletons, p_full
@@ -73,9 +73,18 @@ def label_batch(srv, prompts, n):
     return outs, time.time() - t0
 
 
-def run_instance(inst, cond, repo, emb, srv, extras=True):
+def run_instance(inst, cond, repo, emb, srv, extras=True, perms=(0,), notes_override=None, cands_override=None):
+    """perms: candidate permutations every method is computed on (protocol avg2 = (0, 1)).
+    notes_override: {agent: canonical note} from an earlier run of the same instance/condition/pool -- skips
+    regeneration (temperature-0 notes are deterministic; reuse keeps notes identical and saves cost).
+    cands_override: the stored pool those notes were written for (required with notes_override)."""
     fns, bm, em, gr, repo_dir = repo
-    cands, q = build_candidates(inst, cond, repo, emb)
+    if notes_override is not None and cands_override is None:
+        raise ValueError("reusing notes requires the pool they were written for")
+    if cands_override is not None:
+        cands, q = cands_override, condition_query(inst, cond)[0]
+    else:
+        cands, q = build_candidates(inst, cond, repo, emb)
     view = inference_view(inst, cands, cond)
     n = len(view["pool"])
     sem = dict(zip([c["cid"] for c in view["pool"]],
@@ -85,9 +94,14 @@ def run_instance(inst, cond, repo, emb, srv, extras=True):
 
     # --- specialist notes (5 generations, one retry each if unparseable)
     prompts = [specialist_prompt(a, view, ev) for a in AGENTS]
-    t0 = time.time(); gens = srv.generate(prompts, max_new_tokens=150, temperature=0.0, seed=0); w = time.time() - t0
+    if notes_override is not None:
+        notes = {a: notes_override[a]["text"] or "(no usable note)" for a in AGENTS}
+        notes_rows = [notes_override[a] for a in AGENTS]
+        raw = {a: "(reused from earlier run)" for a in AGENTS}
+        prompts = []
+    t0 = time.time(); gens = srv.generate(prompts, max_new_tokens=150, temperature=0.0, seed=0) if prompts else []; w = time.time() - t0
     tel += _tel("note", inst["id"], cond, prompts, gens, w, gen=True)
-    raw = {}
+    raw = raw if notes_override is not None else {}
     for a, p, g in zip(AGENTS, prompts, gens):
         canon, ranked = parse_note(g["text"], view)
         if canon is None:
@@ -104,23 +118,30 @@ def run_instance(inst, cond, repo, emb, srv, extras=True):
     rendered = {a: render_note(t, view) for a, t in notes.items()}
     values = []
 
-    # --- C-mode 32-subset table (+ B_full5 rotations), one batch so the candidate prefix is shared
-    ps, pres = [], []
-    for m in range(32):
-        p, present = probability_agent_prompt(view, rendered, m); ps.append(p); pres.append(present)
-    for rot in ROTATIONS:
-        p, present = probability_agent_prompt(view, rendered, FULL, order=list(rot)); ps.append(p); pres.append(present)
+    # --- C-mode 32-subset table (+ B_full5 rotations) for every protocol permutation, one batch per instance
+    # (protocol "avg2", adopted at G1: every method averages log-probs over candidate permutations 0 and 1)
+    pv_list = [(perm, permuted_view(view, perm)) for perm in perms]
+    rn_by = {perm: {a: render_note(t_, pv) for a, t_ in notes.items()} for perm, pv in pv_list}
+    ps, pres, meta = [], [], []
+    for perm, pv in pv_list:
+        for m in range(32):
+            p, present = probability_agent_prompt(pv, rn_by[perm], m); ps.append(p); pres.append(present); meta.append((perm, m, pv))
+        for rot in ROTATIONS:
+            p, present = probability_agent_prompt(pv, rn_by[perm], FULL, order=list(rot)); ps.append(p); pres.append(present); meta.append((perm, FULL, pv))
     outs, w = label_batch(srv, ps, n)
-    t = _tel("C", inst["id"], cond, ps, outs, w); tel += t
-    masks = list(range(32)) + [FULL] * len(ROTATIONS)
-    values += _rows(inst["id"], "C", masks, 0, pres, list(zip(ps, outs)), view, w / len(ps) * GPU_USD_PER_S)
-    p_empty = values[0]["probs"]
+    tel += _tel("C", inst["id"], cond, ps, outs, w)
+    for (perm, m, pv), p, o, present in zip(meta, ps, outs, pres):
+        values += _rows(inst["id"], "C", m, perm, [present], [(p, o)], pv, w / len(ps) * GPU_USD_PER_S)
+    empties = [{c: pr for c, pr in zip(sorted(x["cid"] for x in view["pool"]), r["probs"])}
+               for r in values if r["mode"] == "C" and r["subset_mask"] == 0]
+    p_empty_d = empties[0] if len(empties) == 1 else avg_logprob(empties)
+    p_empty = [p_empty_d[c] for c in sorted(p_empty_d)]
 
     k10 = []
     if extras:
         # --- PLAN 4.3 order sensitivity: 2 extra candidate display permutations on the check masks
         ps, pres, meta = [], [], []
-        for perm in ORDER_PERMS:
+        for perm in [x for x in ORDER_PERMS if x not in perms]:
             pv = permuted_view(view, perm); rn = {a: render_note(t_, pv) for a, t_ in notes.items()}
             for m in ORDER_CHECK_MASKS:
                 p, present = probability_agent_prompt(pv, rn, m); ps.append(p); pres.append(present); meta.append((perm, m, pv))
@@ -141,6 +162,6 @@ def run_instance(inst, cond, repo, emb, srv, extras=True):
                for m, p, o in zip((0, FULL), ps10, outs)]
 
     # --- Mode S: sequential market, canonical and reversed orders, starting from p_empty
-    s_rows, s_tel = run_market(view, rendered, p_empty, srv, inst["id"], cond)
+    s_rows, s_tel = run_market(view, rendered, p_empty, srv, inst["id"], cond, views=pv_list, notes_by_view=rn_by)
     values += s_rows; tel += s_tel
     return {"candidates": cands, "notes": notes_rows, "values": values, "k10": k10, "telemetry": tel, "raw_notes": raw}

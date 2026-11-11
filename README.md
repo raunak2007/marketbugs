@@ -67,16 +67,24 @@ The cloned repos and their venvs (`data/**/repos/`) are git-ignored. Rebuild the
 | intervaltree | 0.075 | 0.375 | 0.85 |
 | sortedcontainers | 0.30 | 0.50 | 0.85 |
 
-### G1 pilot (in progress)
-- 30 dev instances (10 per dev repo), full 32-subset tables. Hard budget cap of $10.79 enforced in code.
-- Fixed while bringing the pilot up:
-  - The embedder image was missing its config, so the container crash-looped.
-  - Full-sequence logits ran out of memory on the A10G, so only the last position is now computed.
-  - The note parser dropped Gemma's bracketed `RANKED:` format, which lost about 80% of the notes.
-  - A stall watchdog was added.
-- Measured cost is about $0.04 per instance.
+### Pre-freeze corrections + Mode S (2026-11-10)
+Fixed a duplicated traceback in the probability-agent prompt, trace-derived retrieval under `no_trace`, character
+(not token) truncation, and −∞ credit for retrieval misses. Leakage tests now cover every prompt builder.
+Implemented Mode S (sequential market, canonical and reversed orders, evaluator-side rewards) and a condition-aware,
+resumable pipeline that writes schema-valid rows plus telemetry sidecars. Details are in `BLOCKERS.md`.
+
+### G1 pilot (done 2026-11-11): 30 dev instances, corrected prompts
+| check | result |
+|---|---|
+| p_empty beats random | ✅ Top-1 0.633 vs 0.047 |
+| no leakage | ✅ 46 tests |
+| candidate-order sensitivity | ⚠️ 25.7% > 15%, so the registered 2-permutation averaging protocol is adopted |
+| cost fits budget | ⚠️ ≈$49 at full scope vs $45; ≈$34 with cut order #4/#5 (decision pending) |
+| notes not copied from trace | ✅ mean overlap 9%, spot-check passed |
+
+Exploratory dev Top-1 (single permutation, n=30): p_empty .63, p_full .73, **B_full5 .77**, P_hedge .73,
+Mode S .60–.67. Modal billed $3.35 so far.
 
 ### Next
-- Pilot results and the G1 checks: `p_empty` vs random, leakage, order sensitivity, cost extrapolation, note
-  spot-check.
+- Decide scope for the budget, then collect the G2 dev data under the averaged protocol.
 - B3 Ochiai on the dev split. G2 freeze: temperature, Hedge η, `configs/FROZEN.txt`.

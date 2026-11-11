@@ -61,7 +61,12 @@ def attach_and_validate(d, inst):
     return cands, gc, out_v, bad
 
 
-def main(tag, cond):
+PERMS = (0,)
+
+
+def main(tag, cond, protocol="single"):
+    global PERMS
+    PERMS = {"single": (0,), "avg2": (0, 1)}[protocol]
     d = ART / "runs" / tag / cond
     inst = load_instances()
     cands, gc, vals, n_invalid = attach_and_validate(d, inst)
@@ -71,15 +76,27 @@ def main(tag, cond):
     by = defaultdict(list)
     for v in vals:
         by[v["id"]].append(v)
-    ids = [i for i in cands if len([v for v in by[i] if v["mode"] == "C" and v["order_perm"] == 0]) >= 36]
+    ids = [i for i in cands if all(len([v for v in by[i] if v["mode"] == "C" and v["order_perm"] == q]) >= 36 for q in PERMS)]
     CID = lambda i: sorted(c["cid"] for c in cands[i]["pool"])
 
-    def get(i, mode, mask, perm=0, order=None):
+    def get1(i, mode, mask, perm, order):
         for v in by[i]:
             if v["mode"] == mode and v["subset_mask"] == mask and v["order_perm"] == perm and (
                     order is None or tuple(v["note_order"]) == tuple(order)):
                 return np.array(v["probs"])
         return None
+
+    def get(i, mode, mask, perm=None, order=None):
+        """perm=None -> the run's protocol: perm 0 (single) or the log-prob mean of perms 0 and 1 (avg2)."""
+        if perm is not None:
+            return get1(i, mode, mask, perm, order)
+        ps = [get1(i, mode, mask, q, order) for q in PERMS]
+        if any(x is None for x in ps):
+            return None
+        if len(ps) == 1:
+            return ps[0]
+        lp = np.mean([np.log(np.clip(x, 1e-300, 1)) for x in ps], 0)
+        return pools.normalize(np.exp(lp - lp.max()))
 
     # per-instance method distributions
     D, singles_all = defaultdict(dict), {}
@@ -104,7 +121,7 @@ def main(tag, cond):
         for i in ids:
             D["P_hedge"][i] = pools.log_pool(singles_all[i], w)
 
-    rep = {"tag": tag, "condition": cond, "n_instances": len(ids), "n_gold_in_pool": len(gip),
+    rep = {"tag": tag, "condition": cond, "protocol": protocol, "n_instances": len(ids), "n_gold_in_pool": len(gip),
            "n_retrieval_miss": len(ids) - len(gip), "schema_invalid_rows": n_invalid,
            "by_repo": dict(sorted({r: sum(inst[i]["repo"] == r for i in ids) for r in {inst[i]["repo"] for i in ids}}.items())),
            "random_top1": round(float(np.mean([1 / cands[i]["pool_size"] if gc[i] else 0 for i in ids])), 4),
@@ -203,4 +220,5 @@ def main(tag, cond):
 
 if __name__ == "__main__":
     a = sys.argv[1:]
-    main(a[0], a[a.index("--cond") + 1] if "--cond" in a else "test_informed")
+    main(a[0], a[a.index("--cond") + 1] if "--cond" in a else "test_informed",
+         a[a.index("--protocol") + 1] if "--protocol" in a else "single")

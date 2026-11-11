@@ -1,0 +1,335 @@
+{
+ "tag": "dev120",
+ "condition": "test_informed",
+ "n_instances": 30,
+ "n_gold_in_pool": 28,
+ "n_retrieval_miss": 2,
+ "schema_invalid_rows": 0,
+ "by_repo": {
+  "cachetools": 10,
+  "intervaltree": 10,
+  "sortedcontainers": 10
+ },
+ "random_top1": 0.0467,
+ "hedge_eta": 0.1,
+ "hedge_eta_cv_nll": {
+  "0.1": 1.5497159162292409,
+  "0.3": 1.8187243217132614,
+  "1.0": 2.0527838460539756,
+  "3.0": 2.1284352532886666
+ },
+ "methods": {
+  "p_empty": {
+   "top1": 0.6333,
+   "top3": 0.8,
+   "top5": 0.8333,
+   "rr": 0.725,
+   "n": 30,
+   "nll_gold_in_pool": 2.0111,
+   "temperature": 2.5198,
+   "nll_tempered": 1.1776,
+   "ece": 0.3063
+  },
+  "p_full": {
+   "top1": 0.7333,
+   "top3": 0.8,
+   "top5": 0.8667,
+   "rr": 0.7887,
+   "n": 30,
+   "nll_gold_in_pool": 1.4507,
+   "temperature": 2.5198,
+   "nll_tempered": 0.8325,
+   "ece": 0.2127
+  },
+  "B_full5": {
+   "top1": 0.7667,
+   "top3": 0.8,
+   "top5": 0.8667,
+   "rr": 0.8049,
+   "n": 30,
+   "nll_gold_in_pool": 1.4638,
+   "temperature": 2.5198,
+   "nll_tempered": 0.8476,
+   "ece": 0.175
+  },
+  "single.trace": {
+   "top1": 0.6333,
+   "top3": 0.8333,
+   "top5": 0.8667,
+   "rr": 0.7352,
+   "n": 30,
+   "nll_gold_in_pool": 1.758,
+   "temperature": 2.5198,
+   "nll_tempered": 1.0381,
+   "ece": 0.2682
+  },
+  "single.graph": {
+   "top1": 0.7,
+   "top3": 0.8667,
+   "top5": 0.8667,
+   "rr": 0.7717,
+   "n": 30,
+   "nll_gold_in_pool": 1.5896,
+   "temperature": 2.2449,
+   "nll_tempered": 0.9576,
+   "ece": 0.2804
+  },
+  "single.spec": {
+   "top1": 0.7,
+   "top3": 0.8667,
+   "top5": 0.8667,
+   "rr": 0.7883,
+   "n": 30,
+   "nll_gold_in_pool": 1.7346,
+   "temperature": 2.5198,
+   "nll_tempered": 0.9588,
+   "ece": 0.2764
+  },
+  "single.static": {
+   "top1": 0.7,
+   "top3": 0.8,
+   "top5": 0.8333,
+   "rr": 0.7658,
+   "n": 30,
+   "nll_gold_in_pool": 1.7779,
+   "temperature": 2.5198,
+   "nll_tempered": 1.009,
+   "ece": 0.2773
+  },
+  "single.semantic": {
+   "top1": 0.6667,
+   "top3": 0.8,
+   "top5": 0.8667,
+   "rr": 0.7533,
+   "n": 30,
+   "nll_gold_in_pool": 1.9715,
+   "temperature": 2.5198,
+   "nll_tempered": 1.0791,
+   "ece": 0.2814
+  },
+  "P_vote": {
+   "top1": 0.7333,
+   "top3": 0.8333,
+   "top5": 0.9,
+   "rr": 0.7994,
+   "n": 30,
+   "nll_gold_in_pool": 0.2259,
+   "temperature": 4.0,
+   "nll_tempered": 1.252,
+   "ece": 0.1867
+  },
+  "P_avg": {
+   "top1": 0.7333,
+   "top3": 0.8,
+   "top5": 0.8667,
+   "rr": 0.7881,
+   "n": 30,
+   "nll_gold_in_pool": 1.3481,
+   "temperature": 2.2449,
+   "nll_tempered": 0.9234,
+   "ece": 0.1993
+  },
+  "P_hedge_eq": {
+   "top1": 0.7333,
+   "top3": 0.8,
+   "top5": 0.8667,
+   "rr": 0.7883,
+   "n": 30,
+   "nll_gold_in_pool": 1.4142,
+   "temperature": 2.2449,
+   "nll_tempered": 0.9115,
+   "ece": 0.1849
+  },
+  "S_canonical": {
+   "top1": 0.6,
+   "top3": 0.8667,
+   "top5": 0.8667,
+   "rr": 0.7274,
+   "n": 30,
+   "nll_gold_in_pool": 1.7507,
+   "temperature": 2.2449,
+   "nll_tempered": 1.058,
+   "ece": 0.3353
+  },
+  "S_reversed": {
+   "top1": 0.6667,
+   "top3": 0.8,
+   "top5": 0.8667,
+   "rr": 0.7532,
+   "n": 30,
+   "nll_gold_in_pool": 1.722,
+   "temperature": 2.2449,
+   "nll_tempered": 1.002,
+   "ece": 0.3067
+  },
+  "S_mean": {
+   "top1": 0.6667,
+   "top3": 0.8333,
+   "top5": 0.8667,
+   "rr": 0.7563,
+   "n": 30,
+   "nll_gold_in_pool": 1.4546,
+   "temperature": 2.2449,
+   "nll_tempered": 0.9673,
+   "ece": 0.2516
+  },
+  "P_hedge": {
+   "top1": 0.7333,
+   "top3": 0.8333,
+   "top5": 0.8667,
+   "rr": 0.7911,
+   "n": 30,
+   "nll_gold_in_pool": 1.3865,
+   "temperature": 2.2449,
+   "nll_tempered": 0.9008,
+   "ece": 0.2248
+  }
+ },
+ "per_repo_top1": {
+  "cachetools": {
+   "p_empty": 0.6,
+   "p_full": 0.6,
+   "B_full5": 0.7,
+   "single.trace": 0.5,
+   "single.graph": 0.6,
+   "single.spec": 0.7,
+   "single.static": 0.7,
+   "single.semantic": 0.7,
+   "P_vote": 0.7,
+   "P_avg": 0.7,
+   "P_hedge_eq": 0.7,
+   "S_canonical": 0.6,
+   "S_reversed": 0.5,
+   "S_mean": 0.6,
+   "P_hedge": 0.7
+  },
+  "intervaltree": {
+   "p_empty": 0.7,
+   "p_full": 0.9,
+   "B_full5": 0.9,
+   "single.trace": 0.8,
+   "single.graph": 0.8,
+   "single.spec": 0.8,
+   "single.static": 0.8,
+   "single.semantic": 0.6,
+   "P_vote": 0.8,
+   "P_avg": 0.8,
+   "P_hedge_eq": 0.8,
+   "S_canonical": 0.6,
+   "S_reversed": 0.8,
+   "S_mean": 0.7,
+   "P_hedge": 0.8
+  },
+  "sortedcontainers": {
+   "p_empty": 0.6,
+   "p_full": 0.7,
+   "B_full5": 0.7,
+   "single.trace": 0.6,
+   "single.graph": 0.7,
+   "single.spec": 0.6,
+   "single.static": 0.6,
+   "single.semantic": 0.7,
+   "P_vote": 0.7,
+   "P_avg": 0.7,
+   "P_hedge_eq": 0.7,
+   "S_canonical": 0.6,
+   "S_reversed": 0.7,
+   "S_mean": 0.7,
+   "P_hedge": 0.7
+  }
+ },
+ "order_sensitivity": {
+  "frac_top1_changed": 0.2571,
+  "n": 210,
+  "threshold": 0.15,
+  "exceeds": true
+ },
+ "S_order_sensitivity": {
+  "frac_final_top1_differs": 0.2667,
+  "n": 30
+ },
+ "S_rewards_mean": {
+  "canonical": {
+   "trace": 0.2636,
+   "graph": 0.4373,
+   "spec": -0.4797,
+   "static": -0.0392,
+   "semantic": 0.0784
+  },
+  "reversed": {
+   "semantic": 0.2689,
+   "static": -0.1278,
+   "spec": -0.114,
+   "graph": 0.6186,
+   "trace": -0.3565
+  }
+ },
+ "S_rewards_excluded_gold_miss": 2,
+ "S_reward_telescoping_max_err": 8.881784197001252e-16,
+ "shapley_mean": {
+  "trace": 0.1052,
+  "graph": 0.1439,
+  "spec": 0.1111,
+  "static": 0.0994,
+  "semantic": 0.1008
+ },
+ "shapley_label": "value of an evidence source given the fixed probability agent",
+ "shapley_excluded_gold_miss": 2,
+ "k10": {
+  "0": 0.7,
+  "gip_0": 0.8667,
+  "31": 0.7333,
+  "gip_31": 0.8667
+ },
+ "notes": {
+  "parsed_frac": 1.0,
+  "copy_frac_mean": 0.0918,
+  "copy_frac_max": 0.2367
+ },
+ "telemetry_per_instance": {
+  "note": {
+   "input_tokens": 22824.03333,
+   "output_tokens": 603.93333,
+   "latency_ms": 42107.86399,
+   "est_usd": 0.01318,
+   "calls": 5.0
+  },
+  "C": {
+   "input_tokens": 167860.2,
+   "output_tokens": 0.0,
+   "latency_ms": 49962.62593,
+   "est_usd": 0.01542,
+   "calls": 36.0
+  },
+  "order_perm": {
+   "input_tokens": 63037.86667,
+   "output_tokens": 0.0,
+   "latency_ms": 19329.96186,
+   "est_usd": 0.00602,
+   "calls": 14.0
+  },
+  "k10": {
+   "input_tokens": 5909.66667,
+   "output_tokens": 0.0,
+   "latency_ms": 1671.96364,
+   "est_usd": 0.00057,
+   "calls": 2.0
+  },
+  "S": {
+   "input_tokens": 45197.53333,
+   "output_tokens": 0.0,
+   "latency_ms": 12915.96736,
+   "est_usd": 0.00423,
+   "calls": 10.0
+  }
+ },
+ "method_cost_usd_per_instance": {
+  "p_empty": 0.00043,
+  "p_full": 0.01361,
+  "B_full5": 0.01532,
+  "P_hedge": 0.01532,
+  "S_one_order": 0.01572,
+  "C_table_32": 0.02688
+ },
+ "est_usd_per_instance_all_calls": 0.03941
+}

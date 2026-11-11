@@ -51,3 +51,11 @@ def test_pool_interleave_dedupe_truncate_seeded():
     assert len(keys) == 20 == len(set(keys)) and keys[0] == "f30"
     assert p["candidate_order"] == build_pool("x", lists, 20, 7)["candidate_order"]
     assert "gold_in_pool" not in p
+
+
+def test_parse_note_bracketed_formats_seen_in_pilot():
+    v = _view()
+    for txt in ("RANKED: [C,A,F]\nwhy", "RANKED: [C], [A], [F]\nwhy", "RANKED: [{C}],[{A}],[{F}]\nwhy", "RANKED: C, A,F"):
+        canon, ranked = parse_note(txt, v)
+        assert canon is not None and len(ranked) == 3, txt
+    assert parse_note("RANKED:\nnothing here", v) == (None, [])

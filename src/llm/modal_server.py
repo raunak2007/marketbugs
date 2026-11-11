@@ -58,7 +58,8 @@ class Gemma:
             t0 = time.time()
             enc = self.tok(chunk, return_tensors="pt", padding=True, add_special_tokens=False).to("cuda")
             with torch.no_grad():
-                logits = self.model(**enc).logits[:, -1, :].float().cpu().numpy()
+                # last position only: full-seq x 262k-vocab logits OOM on A10G
+                logits = self.model(**enc, logits_to_keep=1).logits[:, -1, :].float().cpu().numpy()
             dt = (time.time() - t0) * 1000 / len(chunk)
             for j, row in enumerate(logits):
                 raw, probs = extract(row, self.mapping, n_candidates[i + j])
@@ -110,8 +111,12 @@ def smoke():
               "maxdiff_rerun=%.2e" % np.abs(p - np.array(rb["probs"])).max())
 
 
-EMB_MODEL, EMB_REV = "BAAI/bge-small-en-v1.5", "main"  # VERIFY: pin revision sha before G2
-emb_image = modal.Image.debian_slim(python_version="3.11").pip_install("sentence-transformers", "torch==2.8.0")
+EMB_MODEL, EMB_REV = "BAAI/bge-small-en-v1.5", "5c38ec7c405ec4b44b94cc5a9bb96e735b38267a"  # pinned 2026-11-10 via HF API
+# The module reads configs/models.yaml at import, so every image must ship it (Embedder crash-looped without it).
+emb_image = (modal.Image.debian_slim(python_version="3.11")
+             .pip_install("sentence-transformers", "torch==2.8.0", "pyyaml")
+             .add_local_file(str(_LOCAL_CFG), "/root/configs/models.yaml")
+             .add_local_python_source("src"))
 
 
 @app.cls(gpu="T4", image=emb_image, volumes={"/cache": hf_cache}, scaledown_window=120)

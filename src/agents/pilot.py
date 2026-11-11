@@ -29,13 +29,41 @@ class _Srv:
         self.generate = lambda p, **kw: G.generate.remote(p, **kw)
 
 
-def run(path, n, emb):
+# Hard budget guard (human cap 2026-11-10: pilot < $10.79). Conservative: bill BOTH GPUs (A10G + T4 embedder)
+# for the whole wall time, +15% for Modal CPU/memory, and keep a reserve for one hung call / scaledown.
+T4_USD_PER_S = 0.59 / 3600
+BURN_USD_PER_S = (GPU_USD_PER_S + T4_USD_PER_S) * 1.15
+RESERVE_USD = 2.0
+STALL_S = 15 * 60
+
+
+def run(path, n, emb, max_usd=10.79):
     rows = [json.loads(l) for l in open(path)][:n]
     srv = _Srv()
     repo_cache = {}
     out_c, out_n, out_v = [], [], []
     t_start = time.time()
-    for inst in rows:
+    done, stopped = 0, None
+    # Watchdog: the budget guard only runs between instances; a remote call that never returns (e.g. a container
+    # crash-looping at startup) would otherwise hang forever. Abort if one instance exceeds STALL_S.
+    import threading, _thread
+    state = {"t": time.time(), "fired": False}
+
+    def _watch():
+        while done < len(rows) and not state.get("end"):
+            if time.time() - state["t"] > STALL_S:
+                state["fired"] = True; print(f"STOP watchdog: no progress in {STALL_S}s", flush=True)
+                _thread.interrupt_main(); return
+            time.sleep(5)
+    threading.Thread(target=_watch, daemon=True).start()
+    try:
+      for inst in rows:
+        state["t"] = time.time()
+        spent = (time.time() - t_start) * BURN_USD_PER_S
+        per = spent / done if done else 0.0
+        if spent + max(per, 0.0) * 1.5 + RESERVE_USD > max_usd:
+            stopped = f"budget guard: spent~${spent:.2f}, next~${per:.2f}, reserve ${RESERVE_USD}, cap ${max_usd}"
+            print("STOP", stopped, flush=True); break
         repo_dir = ROOT / "data/marketbugs/repos" / inst["repo"]
         if inst["repo"] not in repo_cache:
             fns = index_repo(repo_dir)
@@ -65,13 +93,25 @@ def run(path, n, emb):
         vr = value_rows_for_instance(view, notes, srv)
         out_c.append(cands); out_v += vr
         print(inst["id"], "done", flush=True)
+        done += 1
+        print(f"  ~${(time.time() - t_start) * BURN_USD_PER_S:.2f} so far (conservative)", flush=True)
+    except KeyboardInterrupt:
+        stopped = stopped or ("watchdog stall" if state["fired"] else "interrupted")
+    finally:
+      state["end"] = True
+      _finish(path, rows[:done], out_c[:done], [x for x in out_n if x["id"] in {c["id"] for c in out_c[:done]}],
+              [x for x in out_v if x["id"] in {c["id"] for c in out_c[:done]}], t_start, stopped)
+
+
+def _finish(path, rows, out_c, out_n, out_v, t_start, stopped):
     wall = time.time() - t_start
     tag = Path(path).stem
     for name, data in (("candidates", out_c), ("notes", out_n), ("values_C", out_v)):
         (ART / f"pilot_{tag}_{name}.jsonl").write_text("".join(json.dumps(r) + "\n" for r in data))
     cost = wall * GPU_USD_PER_S
     with open(ART / "costs.jsonl", "a") as f:
-        f.write(json.dumps({"job": f"pilot {tag}", "n": len(rows), "wall_s": wall, "est_usd": cost}) + "\n")
+        f.write(json.dumps({"job": f"pilot {tag}", "n": len(rows), "wall_s": wall, "est_usd": cost,
+                            "conservative_usd": wall * BURN_USD_PER_S, "stopped": stopped}) + "\n")
     print(f"pilot {tag}: {len(rows)} instances, wall {wall:.0f}s, est ${cost:.2f}")
 
 
@@ -86,4 +126,5 @@ if __name__ == "__main__":
             for t, v in zip(miss[i:i + 512], E.embed.remote(miss[i:i + 512])):
                 cache[sha(t)] = v
         return np.array([cache[sha(t)] for t in texts])
-    run(sys.argv[1], n, emb)
+    cap = float(sys.argv[sys.argv.index("--max-usd") + 1]) if "--max-usd" in sys.argv else 10.79
+    run(sys.argv[1], n, emb, cap)

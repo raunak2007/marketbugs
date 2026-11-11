@@ -4,7 +4,10 @@ import re
 from src.agents.prompts import template, LABELS, candidate_block, AGENTS
 from src.cands.functions import FRAME_RE
 
-RANK_RE = re.compile(r"RANKED:\s*([A-T](?:\s*,\s*[A-T])*)")
+# Gemma writes "RANKED: [F,T,A]", "RANKED: [A], [F]", "RANKED: [{L}],[{B}]" or bare "C, A,F": take every standalone
+# label A-T on the RANKED line, with or without brackets/braces.
+RANK_RE = re.compile(r"RANKED:[ \t]*([^\n]*)")
+LABEL_RE = re.compile(r"(?<![A-Za-z])([A-T])(?![A-Za-z])")
 CITE_RE = re.compile(r"\[([A-T])\]")
 
 
@@ -63,7 +66,7 @@ def parse_note(text, view):
     m = RANK_RE.search(text)
     if not m:
         return None, []
-    ranked = list(dict.fromkeys(lab2cid[x.strip()] for x in m.group(1).split(",") if x.strip() in lab2cid))
+    ranked = list(dict.fromkeys(lab2cid[x] for x in LABEL_RE.findall(m.group(1)) if x in lab2cid))
     if not ranked:
         return None, []
     reasons = [l.strip() for l in text[m.end():].splitlines() if l.strip()][:3]

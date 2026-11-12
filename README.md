@@ -85,6 +85,46 @@ resumable pipeline that writes schema-valid rows plus telemetry sidecars. Detail
 Exploratory dev Top-1 (single permutation, n=30): p_empty .63, p_full .73, **B_full5 .77**, P_hedge .73,
 Mode S .60–.67. Modal billed $3.35 so far.
 
+### G2 results (frozen 2026-11-12): 120 dev instances, test_informed, 2-permutation averaging
+Frozen contract `configs/FROZEN.txt` (code `1ac82a0`), parameters `artifacts/frozen_params.json`, full dev report
+`artifacts/g2_dev_report.json`. **Dev numbers, fit and scored on the same 120 instances: exploratory, not findings.**
+No test-split inference has been run.
+
+| method | Top-1 | Top-3 | MRR | NLL (tempered, gold in pool) | ECE |
+|---|---|---|---|---|---|
+| random in pool | .043 | | | | |
+| p_empty (no notes) | .617 | .783 | .703 | .852 | .261 |
+| p_full (5 notes) | .675 | .792 | .738 | .723 | .267 |
+| **B_full5** (5 note orders) | **.692** | .792 | **.748** | .697 | .243 |
+| best single agent (trace / spec) | .667 | .800 / .808 | .732 / .735 | .768 / .783 | .252 / .274 |
+| P_vote | .692 | .775 | .745 | 1.071 | .183 |
+| P_avg | .683 | .792 | .741 | .727 | **.162** |
+| P_hedge_eq | .683 | .792 | .745 | .663 | .221 |
+| P_hedge (frozen η, weights) | .683 | .792 | .743 | **.660** | .218 |
+| Mode S, mean of 2 orders | .675 | .792 | .739 | .749 | .222 |
+
+- **Retrieval sets the ceiling:** gold is in the 20-candidate pool for 102/120 (85%); the 18 misses cap every method.
+- **The model is strong without notes; notes add a little.** p_empty .62 → p_full .68 → B_full5 .69 (73% → 81% when
+  gold is in the pool). Methods from .66 to .69 differ by 1–3 instances (1 instance = .008): a tie at n=120.
+- **Pooling mainly improves calibration, not accuracy.** All methods are overconfident (fitted temperatures ≈ 1.8–2.2);
+  pooled log-loss .66 vs .72 for p_full at similar Top-1.
+- **Learned weights add almost nothing.** Hedge weights: trace .38, semantic .24, spec .15, static .12, graph .11, but
+  P_hedge ≈ equal-weight pool (NLL .660 vs .663). Frozen η = 0.1 is the **lowest value in the pre-registered grid**
+  (CV NLL .89 / .96 / 1.07 / 1.11 for η = 0.1 / 0.3 / 1 / 3), so the optimum may be lower (closer to equal weights).
+- **2-permutation averaging was needed:** candidate-order sensitivity rose to 33% (G1: 25.7%; threshold 15%). Mode S's
+  final pick depends on agent order for 18% of instances.
+- **Credit attribution is small and order-dependent.** Shapley (value of an evidence source given the fixed probability
+  agent): semantic +.08, trace +.02, static +.01, spec −.06, graph −.07. Mode S rewards change sign with order (graph
+  +.01 canonical vs +.16 reversed; semantic +.20 vs −.09).
+- **Notes are not copied from the trace:** 100% parsed; mean longest-common-substring overlap 9% (max 42%, up from G1's
+  24%; worth a spot-check).
+- Per repo Top-1 (B_full5): cachetools .65, intervaltree .73, sortedcontainers .70.
+
+**Protocol amendment before the freeze:** issue text over 4,096 tokens keeps its first 1,024 and last 3,072 tokens.
+It changes exactly 2 dev instances (runaway doctest output: 29k and 4.8M tokens); all other prompts are
+byte-identical. Details, OOM handling and run provenance (all rows on Modal A10G) are in `BLOCKERS.md`.
+Cost of G2 collection ≈ $8.5 conservative, covered by free Modal credit.
+
 ### Next
-- Decide scope for the budget, then collect the G2 dev data under the averaged protocol.
-- B3 Ochiai on the dev split. G2 freeze: temperature, Hedge η, `configs/FROZEN.txt`.
+- G3: held-out test inference under `configs/FROZEN.txt` (wire workspace + cap into `src.agents.run_test` first).
+- B3 Ochiai on the dev split; spot-check the highest-overlap notes.

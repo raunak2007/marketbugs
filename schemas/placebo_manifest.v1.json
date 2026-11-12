@@ -1,0 +1,57 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "placebo_manifest.v1",
+ "type": "object",
+ "additionalProperties": false,
+ "required": [
+  "id",
+  "repo",
+  "specialist",
+  "donor_id",
+  "seed",
+  "source_note_sha256",
+  "donor_note_output_tokens",
+  "rendered_prompt_sha256"
+ ],
+ "properties": {
+  "id": {
+   "type": "string"
+  },
+  "repo": {
+   "type": "string"
+  },
+  "specialist": {
+   "enum": [
+    "trace",
+    "graph",
+    "spec",
+    "static",
+    "semantic"
+   ]
+  },
+  "donor_id": {
+   "type": "string"
+  },
+  "seed": {
+   "type": "integer"
+  },
+  "source_note_sha256": {
+   "type": "string",
+   "pattern": "^[0-9a-f]{64}$"
+  },
+  "donor_note_output_tokens": {
+   "type": [
+    "integer",
+    "null"
+   ]
+  },
+  "rendered_prompt_sha256": {
+   "type": "object",
+   "additionalProperties": {
+    "type": "string",
+    "pattern": "^[0-9a-f]{64}$"
+   },
+   "minProperties": 1
+  }
+ }
+}

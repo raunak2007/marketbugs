@@ -2,7 +2,7 @@ PY ?= .venv/bin/python
 .PHONY: test validate data pools notes values baselines analyze reproduce smoke
 
 test:
-	$(PY) -m pytest -q
+	$(PY) -m pytest -q tests
 
 validate:
 	$(PY) -m src.schemas.validate instance $(filter-out %/eval_only.jsonl,$(wildcard data/marketbugs/*/*.jsonl)) $(wildcard data/swebench_lite/instances.jsonl)

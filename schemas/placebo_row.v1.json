@@ -1,0 +1,113 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "placebo_row.v1",
+ "type": "object",
+ "additionalProperties": false,
+ "required": [
+  "id",
+  "arm",
+  "subset_mask",
+  "order_perm",
+  "note_order",
+  "donor_id",
+  "raw_candidate_logits",
+  "probs",
+  "top1",
+  "token_mapping_hash",
+  "prompt_hash",
+  "model_revision",
+  "input_tokens",
+  "inference_cost_usd"
+ ],
+ "properties": {
+  "id": {
+   "type": "string"
+  },
+  "arm": {
+   "enum": [
+    "placebo_full"
+   ]
+  },
+  "subset_mask": {
+   "const": 31
+  },
+  "order_perm": {
+   "type": "integer",
+   "minimum": 0
+  },
+  "note_order": {
+   "type": "array",
+   "items": {
+    "enum": [
+     "trace",
+     "graph",
+     "spec",
+     "static",
+     "semantic"
+    ]
+   },
+   "minItems": 5,
+   "maxItems": 5
+  },
+  "donor_id": {
+   "type": "string"
+  },
+  "raw_candidate_logits": {
+   "type": "array",
+   "minItems": 1,
+   "maxItems": 20,
+   "items": {
+    "type": "number"
+   }
+  },
+  "probs": {
+   "type": "array",
+   "minItems": 1,
+   "maxItems": 20,
+   "items": {
+    "type": "number"
+   }
+  },
+  "top1": {
+   "enum": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "I",
+    "J",
+    "K",
+    "L",
+    "M",
+    "N",
+    "O",
+    "P",
+    "Q",
+    "R",
+    "S",
+    "T"
+   ]
+  },
+  "token_mapping_hash": {
+   "type": "string"
+  },
+  "prompt_hash": {
+   "type": "string"
+  },
+  "model_revision": {
+   "type": "string"
+  },
+  "input_tokens": {
+   "type": "integer",
+   "minimum": 0
+  },
+  "inference_cost_usd": {
+   "type": "number",
+   "minimum": 0
+  }
+ }
+}

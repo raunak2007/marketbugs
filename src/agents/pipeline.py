@@ -73,7 +73,8 @@ def label_batch(srv, prompts, n):
     return outs, time.time() - t0
 
 
-def run_instance(inst, cond, repo, emb, srv, extras=True, perms=(0,), notes_override=None, cands_override=None):
+def run_instance(inst, cond, repo, emb, srv, extras=True, perms=(0,), notes_override=None, cands_override=None,
+                 mode_s=True):
     """perms: candidate permutations every method is computed on (protocol avg2 = (0, 1)).
     notes_override: {agent: canonical note} from an earlier run of the same instance/condition/pool -- skips
     regeneration (temperature-0 notes are deterministic; reuse keeps notes identical and saves cost).
@@ -162,6 +163,7 @@ def run_instance(inst, cond, repo, emb, srv, extras=True, perms=(0,), notes_over
                for m, p, o in zip((0, FULL), ps10, outs)]
 
     # --- Mode S: sequential market, canonical and reversed orders, starting from p_empty
-    s_rows, s_tel = run_market(view, rendered, p_empty, srv, inst["id"], cond, views=pv_list, notes_by_view=rn_by)
-    values += s_rows; tel += s_tel
+    if mode_s:
+        s_rows, s_tel = run_market(view, rendered, p_empty, srv, inst["id"], cond, views=pv_list, notes_by_view=rn_by)
+        values += s_rows; tel += s_tel
     return {"candidates": cands, "notes": notes_rows, "values": values, "k10": k10, "telemetry": tel, "raw_notes": raw}

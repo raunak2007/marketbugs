@@ -40,6 +40,40 @@ class _Srv:
         self.generate = lambda p, **kw: G.generate.remote(p, **kw)
 
 
+def precompute_embeddings(rows, conds, emb):
+    """Embed everything a run needs up front (repo function texts, candidate code, condition queries) so the T4
+    embedder is used for minutes, not the whole run. Same texts and model as the per-instance calls."""
+    from src.cands.retrieval import fn_text
+    from src.agents.pipeline import condition_query
+    for repo in sorted({r["repo"] for r in rows}):
+        repo_dir = ROOT / "data/marketbugs/repos" / repo
+        fns = index_repo(repo_dir)
+        texts = [fn_text(f)[:2000] for f in fns] + [f.code[:2000] for f in fns]
+        texts += [condition_query(r, c)[0][:2000] for r in rows if r["repo"] == repo for c in conds]
+        emb(list(dict.fromkeys(texts)))
+        print(f"embedded {repo}: {len(set(texts))} texts", flush=True)
+
+
+def load_repo(name, emb):
+    repo_dir = ROOT / "data/marketbugs/repos" / name
+    fns = index_repo(repo_dir)
+    return fns, BM25(fns), Embedding(fns, emb), Graph(fns), repo_dir
+
+
+def write_instance(d, inst, out):
+    """Append one finished instance. candidates_inf is written last: it marks the instance done only if all other
+    files landed (src.agents.run_test.reconcile drops partial rows of unfinished instances on resume)."""
+    out["candidates_inf"], out["values_inf"] = out.pop("candidates"), out.pop("values")
+    out["raw_notes"] = [{"id": inst["id"], "agent": a, "raw_text": t} for a, t in out["raw_notes"].items()]
+    for k in KINDS:
+        data = out[k] if isinstance(out[k], list) else [out[k]]
+        if k != "candidates_inf":
+            with open(d / f"{k}.jsonl", "a") as f:
+                f.write("".join(json.dumps(r) + "\n" for r in data))
+    with open(d / "candidates_inf.jsonl", "a") as f:
+        f.write(json.dumps(out["candidates_inf"]) + "\n")
+
+
 def _done_ids(d):
     p = d / "candidates_inf.jsonl"
     return {json.loads(l)["id"] for l in open(p)} if p.exists() else set()
@@ -77,17 +111,7 @@ def run(path, tag, n, conds, emb, srv, max_usd, extras=True, protocol="single", 
             time.sleep(5)
     threading.Thread(target=_watch, daemon=True).start()
     todo = [(inst, c) for c in conds for inst in rows]
-    # Embed everything a run needs up front (repo function texts, candidate code, condition queries) so the T4
-    # embedder is used for minutes, not the whole run. Same texts and model as the per-instance calls.
-    from src.cands.retrieval import fn_text
-    from src.agents.pipeline import condition_query
-    for repo in sorted({r["repo"] for r in rows}):
-        repo_dir = ROOT / "data/marketbugs/repos" / repo
-        fns = index_repo(repo_dir)
-        texts = [fn_text(f)[:2000] for f in fns] + [f.code[:2000] for f in fns]
-        texts += [condition_query(r, c)[0][:2000] for r in rows if r["repo"] == repo for c in conds]
-        emb(list(dict.fromkeys(texts)))
-        print(f"embedded {repo}: {len(set(texts))} texts", flush=True)
+    precompute_embeddings(rows, conds, emb)
     t4_s = (time.time() - t_start) + 120  # embedder active during precompute + its 120 s scaledown window
     spend = lambda: (time.time() - t_start) * rates[0] * 1.15 + t4_s * rates[1] * 1.15
     try:
@@ -104,23 +128,13 @@ def run(path, tag, n, conds, emb, srv, max_usd, extras=True, protocol="single", 
             if max_hours and done and (time.time() - t_start) + 1.5 * (time.time() - t_start) / done > max_hours * 3600:
                 stopped = f"time guard: {(time.time() - t_start) / 3600:.2f}h elapsed, limit {max_hours}h"
                 print("STOP", stopped, flush=True); break
-            repo_dir = ROOT / "data/marketbugs/repos" / inst["repo"]
             if inst["repo"] not in repo_cache:
-                fns = index_repo(repo_dir)
-                repo_cache[inst["repo"]] = (fns, BM25(fns), Embedding(fns, emb), Graph(fns), repo_dir)
+                repo_cache[inst["repo"]] = load_repo(inst["repo"], emb)
             nov = reuse.get((cond, inst["id"]))
             ok = bool(nov) and len(nov) == 5 and (cond, inst["id"]) in reuse_c
             out = run_instance(inst, cond, repo_cache[inst["repo"]], emb, srv, extras=extras, perms=perms,
                                notes_override=nov if ok else None, cands_override=reuse_c[(cond, inst["id"])] if ok else None)
-            out["candidates_inf"], out["values_inf"] = out.pop("candidates"), out.pop("values")
-            out["raw_notes"] = [{"id": inst["id"], "agent": a, "raw_text": t} for a, t in out["raw_notes"].items()]
-            for k in KINDS:  # candidates_inf last-written => marks the instance done only if all others landed
-                data = out[k] if isinstance(out[k], list) else [out[k]]
-                if k != "candidates_inf":
-                    with open(d / f"{k}.jsonl", "a") as f:
-                        f.write("".join(json.dumps(r) + "\n" for r in data))
-            with open(d / "candidates_inf.jsonl", "a") as f:
-                f.write(json.dumps(out["candidates_inf"]) + "\n")
+            write_instance(d, inst, out)
             done += 1
             tel = out["telemetry"]
             print(f"{inst['id']} [{cond}] done: {len(tel)} calls, {sum(t['input_tokens'] for t in tel)} in-tok, "
@@ -155,16 +169,18 @@ def _local_backend(dtype):
     return g, embed
 
 
-if __name__ == "__main__":
-    backend = _arg("--backend", "modal")
+def make_backend(backend, dtype=None, max_usd=10.79):
+    """-> (srv, emb, rates, max_usd). emb caches by text hash so precomputed embeddings are reused."""
     if backend == "local":
-        srv, embed_fn = _local_backend(_arg("--dtype", None))
+        srv, embed_fn = _local_backend(dtype)
         rates, max_usd = (0.0, 0.0), float("inf")
-    else:
+    elif backend == "modal":
         import modal
         E = modal.Cls.from_name("emfl-gemma", "Embedder")()
         srv, embed_fn = _Srv(), E.embed.remote
-        rates, max_usd = (GPU_USD_PER_S, T4_USD_PER_S), float(_arg("--max-usd", 10.79))
+        rates = (GPU_USD_PER_S, T4_USD_PER_S)
+    else:
+        raise ValueError(backend)
     cache = {}
 
     def emb(texts):
@@ -173,6 +189,12 @@ if __name__ == "__main__":
             for t, v in zip(miss[i:i + 512], embed_fn(miss[i:i + 512])):
                 cache[sha(t)] = v
         return np.array([cache[sha(t)] for t in texts])
+    return srv, emb, rates, max_usd
+
+
+if __name__ == "__main__":
+    backend = _arg("--backend", "modal")
+    srv, emb, rates, max_usd = make_backend(backend, _arg("--dtype", None), float(_arg("--max-usd", 10.79)))
     c = _arg("--cond", "test_informed")
     mh = _arg("--max-hours", None)
     run(sys.argv[1], _arg("--tag", Path(sys.argv[1]).stem), int(_arg("--n", 30)),

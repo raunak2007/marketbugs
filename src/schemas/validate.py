@@ -6,6 +6,9 @@ from jsonschema import Draft202012Validator
 SCHEMA_DIR = Path(__file__).resolve().parents[2] / "schemas"
 KINDS = ("instance", "candidates", "note", "value_row")
 _V = {k: Draft202012Validator(json.loads((SCHEMA_DIR / f"{k}.v2.json").read_text())) for k in KINDS}
+# Sidecar schemas added with protocol v1.0 (placebo arm). Frozen v2 schemas are unchanged.
+SIDECARS = ("placebo_row", "placebo_manifest")
+_V.update({k: Draft202012Validator(json.loads((SCHEMA_DIR / f"{k}.v1.json").read_text())) for k in SIDECARS})
 
 
 def semantic_errors(kind, row):
@@ -19,13 +22,13 @@ def semantic_errors(kind, row):
             errs.append("duplicate cid")
         if sorted(row["candidate_order"]) != sorted(cids):
             errs.append("candidate_order is not a permutation of pool cids")
-    if kind == "value_row":
+    if kind in ("value_row", "placebo_row"):
         p = row["probs"]
         if len(p) != len(row["raw_candidate_logits"]):
             errs.append("probs/logits length mismatch")
         if not all(math.isfinite(x) and x >= 0 for x in p) or abs(sum(p) - 1) > 1e-4:
             errs.append("probs not a finite distribution")
-        if row["gold_logscore"] > 1e-9:
+        if kind == "value_row" and row["gold_logscore"] > 1e-9:
             errs.append("gold_logscore > 0")
     if kind == "instance" and row["source"] == "marketbugs":
         if not row.get("conditions") or not row.get("failing_tests"):

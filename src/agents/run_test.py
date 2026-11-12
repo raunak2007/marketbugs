@@ -20,6 +20,7 @@ run_manifest.json, run_status.json. Writes append per instance; on start `reconc
 instances (atomic rewrite), so resuming never duplicates or orphans rows. A partial run is NOT a 210-instance result.
 """
 import argparse, json, os, sys, threading, time, _thread
+from concurrent.futures import ThreadPoolExecutor, FIRST_COMPLETED, wait
 from pathlib import Path
 import yaml
 from src import frozen
@@ -33,6 +34,9 @@ from src.market.placebo import assign_donors, assignment_hash, sha256
 ROOT = Path(__file__).resolve().parents[2]
 ART = ROOT / "artifacts"
 PROTOCOL_PERMS = {"single": (0,), "avg2": (0, 1)}
+# --primary-only: exactly the C-mode subsets the evaluator's methods need (p_empty, 5 singletons -> P_hedge/P_avg,
+# p_full) + the B_full5 rotations; no Mode S, no extras, no 32-subset table. Rows equal the full-table rows.
+PRIMARY_MASKS = (0, 1, 2, 4, 8, 16, 31)
 REAL_KINDS = ("notes", "values_inf", "k10", "telemetry", "raw_notes")
 RESERVE_USD = 1.0
 STALL_S = 15 * 60
@@ -127,6 +131,7 @@ def run_manifest(d, params, kv, a, assign, ids):
     m = {"frozen_params_sha256": kv["frozen_params_sha256"], "frozen_code_commit": params["code_commit"],
          "protocol": a.protocol, "arms": sorted(a.arms), "placebo_seed": a.seed, "backend": a.backend,
          "dtype": params["model"]["dtype"], "mode_s": not a.no_mode_s, "extras": a.extras,
+         "masks": list(PRIMARY_MASKS) if getattr(a, "primary_only", False) else "all32",
          "placebo_assignment_sha256": assignment_hash(assign), "input_ids_sha256": sha256(json.dumps(ids))}
     p = d / "run_manifest.json"
     if p.exists():
@@ -188,8 +193,16 @@ def main(argv=None):
     ap.add_argument("--resume", action="store_true")
     ap.add_argument("--extras", action="store_true", help="PLAN 4.3 extra perms + K=10 control (off by default)")
     ap.add_argument("--no-mode-s", action="store_true", help="cut E4 Mode S (only if the frozen plan cuts it)")
+    ap.add_argument("--primary-only", action="store_true", help="only the calls for the preregistered primary "
+                    "comparison + its context methods (PRIMARY_MASKS + B_full5 rotations); requires --no-mode-s")
+    ap.add_argument("--workers", type=int, default=1, help="instances in flight (Modal autoscales GPU containers); "
+                    "spend estimate is scaled by this so the cap stays conservative")
+    ap.add_argument("--workspace", default=None, help="expected Modal workspace (src.llm.modal_guard)")
+    ap.add_argument("--workspace-cap-usd", type=float, default=None, help="monthly cap for that workspace")
     a = ap.parse_args(argv)
     a.arms = set(a.arms.split(","))
+    if a.primary_only and (not a.no_mode_s or a.extras):
+        sys.exit("--primary-only requires --no-mode-s and no --extras")
     if not a.arms <= {"real", "placebo"}:
         sys.exit(f"unknown arms {a.arms}")
     params, kv = frozen.verify_frozen()
@@ -208,7 +221,8 @@ def main(argv=None):
     done, pdone = reconcile(d, perms)
 
     from src.agents.pilot import make_backend, precompute_embeddings, load_repo, write_instance
-    srv, emb, rates, _ = make_backend(a.backend, params["model"]["dtype"])
+    srv, emb, rates, ws_left = make_backend(a.backend, params["model"]["dtype"], max_usd=float("inf"),
+                                            workspace=a.workspace, workspace_cap_usd=a.workspace_cap_usd)
     prior = prior_spend(ART / "costs.jsonl", a.prior_usd)
     print(f"budget: prior paid spend ${prior:.2f} of ${a.max_total_usd:.2f} total ({a.backend})", flush=True)
     t_start, n_real, n_plc, stopped = time.time(), 0, 0, None
@@ -222,12 +236,16 @@ def main(argv=None):
             time.sleep(5)
     threading.Thread(target=_watch, daemon=True).start()
     t4_s = [0.0]
-    spend = lambda: (time.time() - t_start) * rates[0] * 1.15 + t4_s[0] * rates[1] * 1.15
+    from src.agents.pilot import XL_USD_PER_S
+    spend = lambda: ((time.time() - t_start) * rates[0] * a.workers + t4_s[0] * rates[1]
+                     + getattr(srv, "xl_s", 0.0) * XL_USD_PER_S) * 1.15
 
     def guard(units):
         per = spend() / units if units else 0.0
         if prior + spend() + 1.5 * per + RESERVE_USD > a.max_total_usd:
             return f"budget guard: prior ${prior:.2f} + this run ${spend():.2f} + next ~${per:.2f} + reserve > ${a.max_total_usd}"
+        if spend() + 1.5 * per + RESERVE_USD > ws_left:
+            return f"workspace guard: this run ${spend():.2f} + next ~${per:.2f} + reserve > ${ws_left:.2f} left under the workspace cap"
         el = time.time() - t_start
         if a.max_hours and units and el + 1.5 * el / units > a.max_hours * 3600:
             return f"time guard: {el / 3600:.2f}h elapsed, limit {a.max_hours}h"
@@ -237,18 +255,32 @@ def main(argv=None):
         if todo:
             precompute_embeddings(todo, [a.cond], emb)
             t4_s[0] = (time.time() - t_start) + 120
-        repo_cache = {}
-        for inst in todo:
-            state["t"] = time.time()
-            if (stopped := guard(n_real)):
-                break
-            if inst["repo"] not in repo_cache:
-                repo_cache[inst["repo"]] = load_repo(inst["repo"], emb)
+        repo_cache = {r: load_repo(r, emb) for r in sorted({i["repo"] for i in todo})}  # before any thread starts
+        masks = PRIMARY_MASKS if a.primary_only else None
+        lock = threading.Lock()
+
+        def one(inst):
             out = run_instance(inst, a.cond, repo_cache[inst["repo"]], emb, srv, extras=a.extras, perms=perms,
-                               mode_s=not a.no_mode_s)
-            write_instance(d, inst, out)
-            done.add(inst["id"]); n_real += 1
-            print(f"{inst['id']} real done ({len(done)}/{len(rows)}), ~${prior + spend():.2f} total", flush=True)
+                               mode_s=not a.no_mode_s, masks=masks)
+            with lock:  # one instance's rows are written together; candidates_inf last = done marker
+                write_instance(d, inst, out)
+            return inst["id"]
+        queue = list(todo)
+        with ThreadPoolExecutor(max_workers=max(1, a.workers)) as ex:
+            running = set()
+            while queue or running:
+                while queue and len(running) < max(1, a.workers) and not stopped:
+                    if (stopped := guard(n_real)):
+                        break
+                    running.add(ex.submit(one, queue.pop(0)))
+                if not running:
+                    break
+                fin, running = wait(running, return_when=FIRST_COMPLETED)
+                for f in fin:
+                    i = f.result()  # re-raises a worker's exception: no silent gaps
+                    state["t"] = time.time()
+                    done.add(i); n_real += 1
+                    print(f"{i} real done ({len(done)}/{len(rows)}), ~${prior + spend():.2f} total", flush=True)
         if "placebo" in a.arms and not stopped:
             cands = {c["id"]: c for c in jl(d / "candidates_inf.jsonl")}
             notes = {}
@@ -277,12 +309,13 @@ def main(argv=None):
         inc_plc = [i for i in exp if i not in pdone] if "placebo" in a.arms else []
         status = {"tag": a.tag, "expected": len(exp), "real_complete": len(done), "placebo_complete": len(pdone),
                   "incomplete_real": inc_real, "incomplete_placebo": inc_plc,
-                  "complete": not inc_real and not inc_plc and {"real", "placebo"} <= a.arms,
+                  "complete": not inc_real and not inc_plc and "real" in a.arms,
                   "stopped": stopped, "updated_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
         _atomic_write_json(d / "run_status.json", status)
         wall = time.time() - t_start
         with open(ART / "costs.jsonl", "a") as f:
-            f.write(json.dumps({"job": f"run_test {a.tag}", "backend": a.backend, "conds": [a.cond],
+            f.write(json.dumps({"job": f"run_test {a.tag}", "ts": time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime()),
+                                "backend": f"modal:{a.workspace}" if a.backend == "modal" else a.backend, "conds": [a.cond],
                                 "protocol": a.protocol, "n": n_real, "n_placebo": n_plc, "wall_s": wall,
                                 "est_usd": wall * rates[0], "conservative_usd": spend(), "stopped": stopped}) + "\n")
         print(("PARTIAL: " if not status["complete"] else "") + json.dumps({k: v for k, v in status.items()

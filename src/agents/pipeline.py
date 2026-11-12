@@ -74,8 +74,10 @@ def label_batch(srv, prompts, n):
 
 
 def run_instance(inst, cond, repo, emb, srv, extras=True, perms=(0,), notes_override=None, cands_override=None,
-                 mode_s=True):
+                 mode_s=True, masks=None):
     """perms: candidate permutations every method is computed on (protocol avg2 = (0, 1)).
+    masks: C-mode subsets to compute (None = all 32). B_full5 rotations are always computed. Rows for the computed
+    masks are built exactly as in the full table (same prompts, same order within the batch); Mode S needs mask 0.
     notes_override: {agent: canonical note} from an earlier run of the same instance/condition/pool -- skips
     regeneration (temperature-0 notes are deterministic; reuse keeps notes identical and saves cost).
     cands_override: the stored pool those notes were written for (required with notes_override)."""
@@ -125,7 +127,7 @@ def run_instance(inst, cond, repo, emb, srv, extras=True, perms=(0,), notes_over
     rn_by = {perm: {a: render_note(t_, pv) for a, t_ in notes.items()} for perm, pv in pv_list}
     ps, pres, meta = [], [], []
     for perm, pv in pv_list:
-        for m in range(32):
+        for m in (range(32) if masks is None else masks):
             p, present = probability_agent_prompt(pv, rn_by[perm], m); ps.append(p); pres.append(present); meta.append((perm, m, pv))
         for rot in ROTATIONS:
             p, present = probability_agent_prompt(pv, rn_by[perm], FULL, order=list(rot)); ps.append(p); pres.append(present); meta.append((perm, FULL, pv))
@@ -133,10 +135,14 @@ def run_instance(inst, cond, repo, emb, srv, extras=True, perms=(0,), notes_over
     tel += _tel("C", inst["id"], cond, ps, outs, w)
     for (perm, m, pv), p, o, present in zip(meta, ps, outs, pres):
         values += _rows(inst["id"], "C", m, perm, [present], [(p, o)], pv, w / len(ps) * GPU_USD_PER_S)
+    if mode_s and masks is not None and 0 not in masks:
+        raise ValueError("Mode S starts from p_empty: masks must include 0")
     empties = [{c: pr for c, pr in zip(sorted(x["cid"] for x in view["pool"]), r["probs"])}
                for r in values if r["mode"] == "C" and r["subset_mask"] == 0]
-    p_empty_d = empties[0] if len(empties) == 1 else avg_logprob(empties)
-    p_empty = [p_empty_d[c] for c in sorted(p_empty_d)]
+    p_empty = None
+    if empties:
+        p_empty_d = empties[0] if len(empties) == 1 else avg_logprob(empties)
+        p_empty = [p_empty_d[c] for c in sorted(p_empty_d)]
 
     k10 = []
     if extras:

@@ -1,0 +1,164 @@
+workspace guard: ratchakraborty, metered this month $0.28, ledger $0.21, cap $25.00, this run may spend $24.72
+embedded cachetools: 359 texts
+embedded intervaltree: 266 texts
+embedded sortedcontainers: 296 texts
+mb-cachetools-0000 [test_informed] done: 101 calls, 309042 in-tok, ~$0.09 so far (modal:ratchakraborty), 3 min
+mb-cachetools-0001 [test_informed] done: 101 calls, 306119 in-tok, ~$0.12 so far (modal:ratchakraborty), 4 min
+mb-cachetools-0002 [test_informed] done: 101 calls, 301972 in-tok, ~$0.15 so far (modal:ratchakraborty), 6 min
+mb-cachetools-0003 [test_informed] done: 101 calls, 255010 in-tok, ~$0.18 so far (modal:ratchakraborty), 7 min
+mb-cachetools-0004 [test_informed] done: 101 calls, 311864 in-tok, ~$0.20 so far (modal:ratchakraborty), 8 min
+mb-cachetools-0005 [test_informed] done: 101 calls, 355415 in-tok, ~$0.24 so far (modal:ratchakraborty), 10 min
+mb-cachetools-0006 [test_informed] done: 101 calls, 257359 in-tok, ~$0.26 so far (modal:ratchakraborty), 11 min
+mb-cachetools-0007 [test_informed] done: 101 calls, 301553 in-tok, ~$0.29 so far (modal:ratchakraborty), 12 min
+mb-cachetools-0008 [test_informed] done: 101 calls, 298000 in-tok, ~$0.32 so far (modal:ratchakraborty), 14 min
+mb-cachetools-0009 [test_informed] done: 101 calls, 310541 in-tok, ~$0.35 so far (modal:ratchakraborty), 15 min
+mb-intervaltree-0000 [test_informed] done: 101 calls, 371890 in-tok, ~$0.38 so far (modal:ratchakraborty), 17 min
+mb-intervaltree-0001 [test_informed] done: 101 calls, 538438 in-tok, ~$0.44 so far (modal:ratchakraborty), 20 min
+mb-intervaltree-0002 [test_informed] done: 101 calls, 403279 in-tok, ~$0.48 so far (modal:ratchakraborty), 22 min
+mb-intervaltree-0003 [test_informed] done: 101 calls, 565734 in-tok, ~$0.55 so far (modal:ratchakraborty), 25 min
+mb-intervaltree-0004 [test_informed] done: 101 calls, 566722 in-tok, ~$0.61 so far (modal:ratchakraborty), 27 min
+mb-intervaltree-0005 [test_informed] done: 101 calls, 547777 in-tok, ~$0.67 so far (modal:ratchakraborty), 30 min
+mb-intervaltree-0006 [test_informed] done: 101 calls, 393942 in-tok, ~$0.71 so far (modal:ratchakraborty), 32 min
+mb-intervaltree-0007 [test_informed] done: 101 calls, 392128 in-tok, ~$0.75 so far (modal:ratchakraborty), 34 min
+mb-intervaltree-0008 [test_informed] done: 101 calls, 418399 in-tok, ~$0.79 so far (modal:ratchakraborty), 36 min
+mb-intervaltree-0009 [test_informed] done: 101 calls, 563753 in-tok, ~$0.85 so far (modal:ratchakraborty), 39 min
+mb-sortedcontainers-0000 [test_informed] done: 101 calls, 525465 in-tok, ~$0.91 so far (modal:ratchakraborty), 42 min
+mb-sortedcontainers-0001 [test_informed] done: 101 calls, 677851 in-tok, ~$0.99 so far (modal:ratchakraborty), 46 min
+mb-sortedcontainers-0002 [test_informed] done: 101 calls, 454196 in-tok, ~$1.04 so far (modal:ratchakraborty), 48 min
+mb-sortedcontainers-0003 [test_informed] done: 101 calls, 741221 in-tok, ~$1.13 so far (modal:ratchakraborty), 52 min
+mb-sortedcontainers-0004 [test_informed] done: 101 calls, 514742 in-tok, ~$1.18 so far (modal:ratchakraborty), 55 min
+mb-sortedcontainers-0005 [test_informed] done: 101 calls, 725665 in-tok, ~$1.27 so far (modal:ratchakraborty), 59 min
+mb-sortedcontainers-0006 [test_informed] done: 101 calls, 618797 in-tok, ~$1.34 so far (modal:ratchakraborty), 62 min
+mb-sortedcontainers-0007 [test_informed] done: 101 calls, 415284 in-tok, ~$1.38 so far (modal:ratchakraborty), 64 min
+mb-sortedcontainers-0008 [test_informed] done: 101 calls, 726948 in-tok, ~$1.47 so far (modal:ratchakraborty), 68 min
+mb-sortedcontainers-0009 [test_informed] done: 101 calls, 737216 in-tok, ~$1.56 so far (modal:ratchakraborty), 73 min
+mb-cachetools-0013 [test_informed] done: 106 calls, 393628 in-tok, ~$1.61 so far (modal:ratchakraborty), 75 min
+mb-cachetools-0014 [test_informed] done: 106 calls, 350528 in-tok, ~$1.66 so far (modal:ratchakraborty), 77 min
+mb-cachetools-0015 [test_informed] done: 106 calls, 333472 in-tok, ~$1.71 so far (modal:ratchakraborty), 80 min
+mb-cachetools-0016 [test_informed] done: 106 calls, 312330 in-tok, ~$1.75 so far (modal:ratchakraborty), 82 min
+mb-cachetools-0017 [test_informed] done: 106 calls, 310771 in-tok, ~$1.80 so far (modal:ratchakraborty), 84 min
+mb-cachetools-0018 [test_informed] done: 106 calls, 316402 in-tok, ~$1.84 so far (modal:ratchakraborty), 86 min
+mb-cachetools-0019 [test_informed] done: 106 calls, 395661 in-tok, ~$1.90 so far (modal:ratchakraborty), 89 min
+mb-cachetools-0020 [test_informed] done: 106 calls, 351052 in-tok, ~$1.95 so far (modal:ratchakraborty), 91 min
+mb-cachetools-0021 [test_informed] done: 106 calls, 332877 in-tok, ~$1.99 so far (modal:ratchakraborty), 93 min
+mb-cachetools-0022 [test_informed] done: 106 calls, 329287 in-tok, ~$2.05 so far (modal:ratchakraborty), 96 min
+mb-cachetools-0023 [test_informed] done: 106 calls, 344609 in-tok, ~$2.10 so far (modal:ratchakraborty), 98 min
+mb-cachetools-0024 [test_informed] done: 106 calls, 356556 in-tok, ~$2.15 so far (modal:ratchakraborty), 100 min
+mb-cachetools-0025 [test_informed] done: 106 calls, 340515 in-tok, ~$2.19 so far (modal:ratchakraborty), 103 min
+mb-cachetools-0026 [test_informed] done: 106 calls, 303735 in-tok, ~$2.23 so far (modal:ratchakraborty), 104 min
+mb-cachetools-0027 [test_informed] done: 106 calls, 376055 in-tok, ~$2.28 so far (modal:ratchakraborty), 107 min
+mb-cachetools-0028 [test_informed] done: 106 calls, 289069 in-tok, ~$2.32 so far (modal:ratchakraborty), 109 min
+mb-cachetools-0029 [test_informed] done: 106 calls, 309471 in-tok, ~$2.37 so far (modal:ratchakraborty), 111 min
+mb-cachetools-0030 [test_informed] done: 106 calls, 299004 in-tok, ~$2.40 so far (modal:ratchakraborty), 113 min
+mb-cachetools-0031 [test_informed] done: 106 calls, 273352 in-tok, ~$2.44 so far (modal:ratchakraborty), 114 min
+mb-cachetools-0032 [test_informed] done: 106 calls, 320055 in-tok, ~$2.48 so far (modal:ratchakraborty), 116 min
+mb-cachetools-0033 [test_informed] done: 106 calls, 331234 in-tok, ~$2.53 so far (modal:ratchakraborty), 119 min
+Traceback (most recent call last):
+  File "/Users/raunakmondal/Downloads/project/.venv/lib/python3.11/site-packages/modal/_serialization.py", line 117, in deserialize
+    return Unpickler(client, io.BytesIO(s)).load()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'torch'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Users/raunakmondal/Downloads/project/src/agents/pilot.py", line 209, in <module>
+    run(sys.argv[1], _arg("--tag", Path(sys.argv[1]).stem), int(_arg("--n", 30)),
+  File "/Users/raunakmondal/Downloads/project/src/agents/pilot.py", line 136, in run
+    out = run_instance(inst, cond, repo_cache[inst["repo"]], emb, srv, extras=extras, perms=perms,
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raunakmondal/Downloads/project/src/agents/pipeline.py", line 103, in run_instance
+    t0 = time.time(); gens = srv.generate(prompts, max_new_tokens=150, temperature=0.0, seed=0) if prompts else []; w = time.time() - t0
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raunakmondal/Downloads/project/src/agents/pilot.py", line 41, in <lambda>
+    self.generate = lambda p, **kw: G.generate.remote(p, **kw)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raunakmondal/Downloads/project/.venv/lib/python3.11/site-packages/modal/_object.py", line 49, in wrapped
+    return await method(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raunakmondal/Downloads/project/.venv/lib/python3.11/site-packages/modal/_functions.py", line 2081, in remote
+    return await self._call_function(args, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raunakmondal/Downloads/project/.venv/lib/python3.11/site-packages/modal/_functions.py", line 2018, in _call_function
+    return await invocation.run_function()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raunakmondal/Downloads/project/.venv/lib/python3.11/site-packages/modal/_functions.py", line 517, in run_function
+    return await _process_result(
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/raunakmondal/Downloads/project/.venv/lib/python3.11/site-packages/modal/_utils/function_utils.py", line 547, in _process_result
+    raise ExecutionError(
+modal.exception.ExecutionError: Could not deserialize remote exception due to local error:
+Deserialization failed because the 'torch' module is not available in the local environment.
+This can happen if your local environment does not have the remote exception definitions.
+Here is the remote traceback:
+Traceback (most recent call last):
+  File "/pkg/modal/_runtime/container_io_manager.py", line 987, in handle_input_exception
+    yield
+  File "/pkg/modal/_container_entrypoint.py", line 189, in run_input_sync
+    values = io_context.call_function_sync()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pkg/modal/_runtime/container_io_manager.py", line 266, in call_function_sync
+    expected_value_or_values = self.finalized_function.callable(*args, **kwargs)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/src/llm/modal_server.py", line 40, in generate
+    return self.b.generate(prompts, max_new_tokens, temperature, seed)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/src/llm/hf_backend.py", line 94, in generate
+    g = self.model.generate(**enc, **kw)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/torch/utils/_contextlib.py", line 120, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/transformers/generation/utils.py", line 3000, in generate
+    result = decoding_method(
+             ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/transformers/generation/utils.py", line 3200, in _sample
+    outputs = self._prefill(
+              ^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/transformers/generation/utils.py", line 4312, in _prefill
+    return self(**model_inputs, return_dict=True)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1773, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1784, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/transformers/utils/generic.py", line 943, in wrapper
+    output = func(self, *args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/transformers/models/gemma4/modeling_gemma4.py", line 2594, in forward
+    outputs = self.model(
+              ^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1773, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1784, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/transformers/utils/generic.py", line 1081, in wrapper
+    output = func(self, *args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/transformers/utils/generic.py", line 943, in wrapper
+    output = func(self, *args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/transformers/models/gemma4/modeling_gemma4.py", line 2418, in forward
+    causal_mask_mapping = create_masks_for_generate(**mask_kwargs)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/transformers/masking_utils.py", line 1561, in create_masks_for_generate
+    causal_masks[layer_pattern] = mask_function(**mask_kwargs)
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/transformers/masking_utils.py", line 1194, in create_sliding_window_causal_mask
+    causal_mask = mask_interface(
+                  ^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/transformers/masking_utils.py", line 516, in sdpa_mask
+    attention_mask = mask_function(*_non_vmap_expansion_sdpa(batch_arange, head_arange, q_arange, kv_arange))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/transformers/masking_utils.py", line 52, in and_mask
+    result = result & mask(batch_idx, head_idx, q_idx, kv_idx).to(result.device)
+             ~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 2.14 GiB. GPU 0 has a total capacity of 22.06 GiB of which 991.94 MiB is free. Process 1 has 21.08 GiB memory in use. Of the allocated memory 20.49 GiB is allocated by PyTorch, and 315.42 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+
+run g2: 51 instance-conditions, wall 7114s, conservative $3.84

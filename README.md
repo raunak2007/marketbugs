@@ -1,4 +1,4 @@
-# MarketBugs: Evidence Markets for Small-Model Fault Localization
+# MarketBugs: What Makes Evidence Aggregation Reliable for Small-Model Software Debugging?
 
 [**Paper**](paper/MARKETBUGS_PAPER.md) · [**Held-out results**](artifacts/validation/heldout_v1/RESULTS.md) · [**Preregistration**](ANALYSIS_PLAN.md) · [**Decision log**](BLOCKERS.md) · [**Project log**](docs/PROGRESS.md)
 
@@ -7,8 +7,8 @@ a piece of evidence and their beliefs are pooled into one forecast? We built a m
 around Gemma 4 E4B, wrote down the main test before looking at any held-out data, and ran it on 210 bugs from seven
 repositories the system had never seen.
 
-**The short answer is no.** The learned pool and the simpler baseline picked the same function on 202 of 210 bugs,
-and the difference between them is indistinguishable from zero.
+**The short answer is no.** The learned pool and the simpler baseline had the same correctness on 202 of 210 bugs
+(they picked the same function on 193), and the difference between them is indistinguishable from zero.
 
 ## Main result
 
@@ -136,7 +136,7 @@ split. The paper lists every deviation from the plan, and `BLOCKERS.md` has the 
 
 ```bibtex
 @misc{marketbugs2026,
-  title  = {Evidence Markets for Small-Model Fault Localization: A Preregistered Held-Out Test},
+  title  = {MarketBugs: What Makes Evidence Aggregation Reliable for Small-Model Software Debugging?},
   author = {Mondal, Raunak},
   year   = {2026},
   url    = {https://github.com/raunak2007/marketbugs}

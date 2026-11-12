@@ -1,0 +1,11 @@
+{
+ "note": "Top-1 SELECTED-FUNCTION agreement (argmax of the final protocol distributions), computed gold-free from the audited held-out run. Distinct from correctness ties in confidence_intervals.json.",
+ "n": 210,
+ "same_top1": {
+  "P_hedge|B_full5": 193,
+  "p_full|B_full5": 205,
+  "p_full|p_empty": 179,
+  "B_full5|p_empty": 177,
+  "P_hedge|p_empty": 177
+ }
+}

@@ -2,7 +2,10 @@
 
 python -m src.agents.pilot <instances.jsonl> --tag <name> [--n 30] [--cond test_informed|no_trace|both]
                            [--max-usd X] [--no-extras] [--protocol single|avg2] [--reuse-notes-from <tag>]
-                           [--skip K]
+                           [--skip K] [--backend modal|local] [--max-hours H] [--dtype bfloat16|float16]
+
+--backend local loads Gemma + the embedder in-process (Kaggle/any free GPU): cost rates are 0, no $ guard, and
+--max-hours stops cleanly between instances before a session limit kills the process mid-write.
 
 Writes artifacts/runs/<tag>/<cond>/{candidates_inf,notes,values_inf,k10,telemetry,raw_notes}.jsonl, appending one
 instance at a time (crash-safe; rerunning the same tag resumes, skipping finished ids). Gold is attached later by
@@ -11,7 +14,6 @@ src.analysis.attach_gold. Refuses non-dev instances (no test outcomes before the
 import json, sys, time, threading, _thread
 from pathlib import Path
 import numpy as np
-import modal
 from src.agents.pipeline import run_instance
 from src.agents.run_values import GPU_USD_PER_S
 from src.cands.functions import index_repo
@@ -32,6 +34,7 @@ KINDS = ("candidates_inf", "notes", "values_inf", "k10", "telemetry", "raw_notes
 
 class _Srv:
     def __init__(self):
+        import modal
         G = modal.Cls.from_name("emfl-gemma", "Gemma")()
         self.label_logits = lambda p, n: G.label_logits.remote(p, n)
         self.generate = lambda p, **kw: G.generate.remote(p, **kw)
@@ -45,7 +48,8 @@ def _done_ids(d):
 PROTOCOLS = {"single": (0,), "avg2": (0, 1)}  # avg2 adopted at G1 (order sensitivity 25.7% > 15%)
 
 
-def run(path, tag, n, conds, emb, srv, max_usd, extras=True, protocol="single", reuse_from=None, skip=0):
+def run(path, tag, n, conds, emb, srv, max_usd, extras=True, protocol="single", reuse_from=None, skip=0,
+        rates=(GPU_USD_PER_S, T4_USD_PER_S), max_hours=None, backend="modal"):
     rows = [json.loads(l) for l in open(path)][skip:skip + n]
     perms = PROTOCOLS[protocol]
     reuse, reuse_c = {}, {}
@@ -85,7 +89,7 @@ def run(path, tag, n, conds, emb, srv, max_usd, extras=True, protocol="single", 
         emb(list(dict.fromkeys(texts)))
         print(f"embedded {repo}: {len(set(texts))} texts", flush=True)
     t4_s = (time.time() - t_start) + 120  # embedder active during precompute + its 120 s scaledown window
-    spend = lambda: (time.time() - t_start) * GPU_USD_PER_S * 1.15 + t4_s * T4_USD_PER_S * 1.15
+    spend = lambda: (time.time() - t_start) * rates[0] * 1.15 + t4_s * rates[1] * 1.15
     try:
         for inst, cond in todo:
             d = ART / "runs" / tag / cond; d.mkdir(parents=True, exist_ok=True)
@@ -96,6 +100,9 @@ def run(path, tag, n, conds, emb, srv, max_usd, extras=True, protocol="single", 
             per = spent / done if done else 0.0
             if spent + per * 1.5 + RESERVE_USD > max_usd:
                 stopped = f"budget guard: spent~${spent:.2f}, next~${per:.2f}, reserve ${RESERVE_USD}, cap ${max_usd}"
+                print("STOP", stopped, flush=True); break
+            if max_hours and done and (time.time() - t_start) + 1.5 * (time.time() - t_start) / done > max_hours * 3600:
+                stopped = f"time guard: {(time.time() - t_start) / 3600:.2f}h elapsed, limit {max_hours}h"
                 print("STOP", stopped, flush=True); break
             repo_dir = ROOT / "data/marketbugs/repos" / inst["repo"]
             if inst["repo"] not in repo_cache:
@@ -117,16 +124,16 @@ def run(path, tag, n, conds, emb, srv, max_usd, extras=True, protocol="single", 
             done += 1
             tel = out["telemetry"]
             print(f"{inst['id']} [{cond}] done: {len(tel)} calls, {sum(t['input_tokens'] for t in tel)} in-tok, "
-                  f"~${spend():.2f} so far (A10G wall + T4 precompute, +15%)", flush=True)
+                  f"~${spend():.2f} so far ({backend}), {(time.time() - t_start) / 60:.0f} min", flush=True)
     except KeyboardInterrupt:
         stopped = stopped or ("watchdog stall" if state["fired"] else "interrupted")
     finally:
         state["end"] = True
         wall = time.time() - t_start
         with open(ART / "costs.jsonl", "a") as f:
-            f.write(json.dumps({"job": f"run {tag}", "conds": conds, "protocol": protocol, "n": done, "wall_s": wall,
-                                "est_usd": wall * GPU_USD_PER_S,
-                                "conservative_usd": spend() if "spend" in dir() else wall * BURN_USD_PER_S,
+            f.write(json.dumps({"job": f"run {tag}", "backend": backend, "conds": conds, "protocol": protocol, "n": done, "wall_s": wall,
+                                "est_usd": wall * rates[0],
+                                "conservative_usd": spend() if "spend" in dir() else wall * (rates[0] + rates[1]) * 1.15,
                                 "stopped": stopped}) + "\n")
         print(f"run {tag}: {done} instance-conditions, wall {wall:.0f}s, conservative ${wall * BURN_USD_PER_S:.2f}")
 
@@ -135,18 +142,41 @@ def _arg(name, default):
     return sys.argv[sys.argv.index(name) + 1] if name in sys.argv else default
 
 
+def _local_backend(dtype):
+    """In-process Gemma + embedder (same pinned models/revisions as the Modal images)."""
+    import yaml
+    from src.llm.hf_backend import HFGemma, EMB_MODEL, EMB_REV
+    from sentence_transformers import SentenceTransformer
+    pa = yaml.safe_load((ROOT / "configs/models.yaml").read_text())["probability_agent"]
+    g = HFGemma(pa["hf_id"], pa["revision"], dtype=dtype or pa.get("dtype", "bfloat16"))
+    print("backend info:", json.dumps({k: v for k, v in g.info().items() if k != "mapping"}), flush=True)
+    m = SentenceTransformer(EMB_MODEL, revision=EMB_REV, device="cuda")
+    embed = lambda texts: m.encode(texts, batch_size=64, normalize_embeddings=True).tolist()
+    return g, embed
+
+
 if __name__ == "__main__":
-    E = modal.Cls.from_name("emfl-gemma", "Embedder")()
+    backend = _arg("--backend", "modal")
+    if backend == "local":
+        srv, embed_fn = _local_backend(_arg("--dtype", None))
+        rates, max_usd = (0.0, 0.0), float("inf")
+    else:
+        import modal
+        E = modal.Cls.from_name("emfl-gemma", "Embedder")()
+        srv, embed_fn = _Srv(), E.embed.remote
+        rates, max_usd = (GPU_USD_PER_S, T4_USD_PER_S), float(_arg("--max-usd", 10.79))
     cache = {}
 
     def emb(texts):
         miss = [t for t in texts if sha(t) not in cache]
         for i in range(0, len(miss), 512):
-            for t, v in zip(miss[i:i + 512], E.embed.remote(miss[i:i + 512])):
+            for t, v in zip(miss[i:i + 512], embed_fn(miss[i:i + 512])):
                 cache[sha(t)] = v
         return np.array([cache[sha(t)] for t in texts])
     c = _arg("--cond", "test_informed")
+    mh = _arg("--max-hours", None)
     run(sys.argv[1], _arg("--tag", Path(sys.argv[1]).stem), int(_arg("--n", 30)),
-        ["test_informed", "no_trace"] if c == "both" else [c], emb, _Srv(), float(_arg("--max-usd", 10.79)),
+        ["test_informed", "no_trace"] if c == "both" else [c], emb, srv, max_usd,
         extras="--no-extras" not in sys.argv, protocol=_arg("--protocol", "single"),
-        reuse_from=_arg("--reuse-notes-from", None), skip=int(_arg("--skip", 0)))
+        reuse_from=_arg("--reuse-notes-from", None), skip=int(_arg("--skip", 0)),
+        rates=rates, max_hours=float(mh) if mh else None, backend=backend)

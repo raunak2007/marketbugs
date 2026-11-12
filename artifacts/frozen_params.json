@@ -5,7 +5,7 @@
   0,
   1
  ],
- "code_commit": "bd7ed62fdf887668d293fd95967d4cf80f3d13c6",
+ "code_commit": "bda071662d1aea379990ddd0b170a2459b39169b",
  "condition": "test_informed",
  "config_hashes": {
   "configs/models.yaml": "00b6dbdebb4bc9086b274641d3e6137826ac1124eb91b387e8f09941b9227af2",
@@ -22,7 +22,7 @@
   "schemas/value_row.v2.json": "bfac35d041ac94549e43d28847a03edb5fac612b76d16620b46798085a0cd2d3"
  },
  "config_hashes_sha256": "d5fe7dad07e589cd1d53d42e8f4171e4565571d5999f1c7d4354798c75a8059c",
- "created_utc": "2026-11-12T20:21:32Z",
+ "created_utc": "2026-11-12T20:22:40Z",
  "dev_tags": [
   "g2",
   "g2b",

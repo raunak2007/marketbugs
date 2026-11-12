@@ -455,3 +455,16 @@ def test_placebo_instance_makes_exactly_two_calls_and_valid_rows():
         assert not validate_row("placebo_manifest", m)
     view = inference_view(inst, cands, "test_informed")
     assert srv.prompts == [j[2] for j in placebo_prompts(view, {a: d["text"] for a, d in donor.items()}, PERMS)]
+
+
+def test_freeze_roundtrip_with_sorted_json_keys(tmp_path):
+    """freeze_dev saves frozen_params.json with sort_keys; the gate must still accept it (bug found 2026-11-12:
+    weights rendered in dict order made FROZEN.txt never match the reloaded alphabetical JSON)."""
+    from src.agents.prompts import AGENTS
+    assert tuple(AGENTS) == frozen.HEDGE_AGENT_ORDER
+    params = json.loads((ROOT / "artifacts/frozen_params.json").read_text())
+    js, txt = tmp_path / "frozen_params.json", tmp_path / "FROZEN.txt"
+    js.write_text(json.dumps(params, indent=1, sort_keys=True))
+    txt.write_text(frozen.render_frozen_txt(params, frozen.sha256_file(js)))
+    p2, _ = frozen.load_frozen(tmp_path, txt, js)
+    assert p2["hedge_weights"] == params["hedge_weights"]

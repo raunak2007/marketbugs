@@ -173,7 +173,7 @@ templated issues favour trace evidence. One small model (Gemma 4 E4B) serves eve
 blind spots. Candidate-order and note-order sensitivity are large, which is why we average over orders; the averaging
 itself is a design choice. Our "market" has no incentives or trading: it is an aggregation scheme, and Hedge is a
 supervised pool. Development and held-out calls ran on Modal A10G GPUs in bf16; bf16 batch composition can change
-low-order bits (99.5% Top-1 agreement on identical prompts across runs).
+low-order bits (99.5% Top-1 agreement on identical prompts across runs). One of 1,050 held-out note generations (one specialist on mb-tomli-0010, a 27k-token prompt) exceeded A10G memory and was generated greedily on an L40S; every probability-agent call ran on A10G.
 
 ## 9. Conclusion
 

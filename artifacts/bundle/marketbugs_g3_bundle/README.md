@@ -1,6 +1,6 @@
 # MarketBugs G3 bundle (held-out result + paper)
 
-- `MARKETBUGS_PAPER.md` — paper draft (2,547 words excluding references; 2,757 including).
+- `MARKETBUGS_PAPER.md` — paper draft (see word count in the delivery note).
 - `results/` — held-out evaluation over all 210 test bugs: `RESULTS.md` (tables), `summary.json`, `per_instance.csv`
   (one row per bug; every headline number reproduces from it), `per_repo.csv`, `confidence_intervals.json`
   (two-stage repository-cluster bootstrap, 10,000 replicates, seed 20261110).

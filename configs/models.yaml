@@ -14,3 +14,10 @@ prompting:
   # PLAN 4.2 fixed token budget per candidate (pinned Gemma tokenizer). 300 matches the old 1200-char budget on the
   # pilot pools (mean kept 126.9 vs 126.3 tokens; truncated 12.5% vs 13.5%), so cost is unchanged. Set 2026-11-10.
   code_token_budget: 300
+  # Issue-text cap, set pre-freeze 2026-11-12 (G2). Two dev instances had runaway doctest output in the failing-test
+  # text (mb-cachetools-0034: 29,379 tokens; mb-sortedcontainers-0038: 4,788,176 tokens, a printed 1M-element list)
+  # that cannot fit an A10G / Gemma's context. Every other dev instance is <= 2,372 tokens, so the cap changes only
+  # those two. Over-budget text keeps its first `issue_head_tokens` and last (budget - head) tokens with a marker;
+  # the tail holds the assertion / error type. Applied in src.agents.views.inference_view (all prompts + retrieval).
+  issue_token_budget: 4096
+  issue_head_tokens: 1024

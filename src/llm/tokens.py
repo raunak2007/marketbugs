@@ -12,6 +12,8 @@ ROOT = Path(__file__).resolve().parents[2]
 CFG = yaml.safe_load((ROOT / "configs/models.yaml").read_text())
 CODE_TOKEN_BUDGET = int(CFG["prompting"]["code_token_budget"])
 TRUNC_MARK = "\n# ...truncated"
+ISSUE_TOKEN_BUDGET = int(CFG["prompting"]["issue_token_budget"])
+ISSUE_HEAD_TOKENS = int(CFG["prompting"]["issue_head_tokens"])
 _injected = None
 
 
@@ -54,3 +56,16 @@ def truncate_code(code, budget=CODE_TOKEN_BUDGET):
     if len(ids) <= budget:
         return code
     return t.decode(ids[:budget]) + TRUNC_MARK
+
+
+def truncate_issue(text, budget=ISSUE_TOKEN_BUDGET, head=ISSUE_HEAD_TOKENS):
+    """Issue/failing-test text over `budget` tokens -> first `head` + last `budget - head` tokens with a marker that
+    states how many tokens were cut. Text within budget is returned unchanged (byte-identical)."""
+    if text is None:
+        return None
+    t = tokenizer()
+    ids = t.encode(text)
+    if len(ids) <= budget:
+        return text
+    tail = budget - head
+    return (t.decode(ids[:head]) + f"\n[... {len(ids) - budget} tokens truncated ...]\n" + t.decode(ids[-tail:]))

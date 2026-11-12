@@ -12,7 +12,8 @@ CFG = yaml.safe_load(_CFG_PATH.read_text())
 PA = CFG["probability_agent"]
 
 image = (modal.Image.debian_slim(python_version="3.11")
-         .pip_install("torch==2.8.0", "transformers>=5.0", "accelerate", "numpy", "pyyaml")
+         .env({"PYTORCH_CUDA_ALLOC_CONF": "expandable_segments:True"})  # fragmentation OOM in generate (G2)
+         .pip_install("torch==2.8.0", "transformers==5.22.2", "accelerate==1.15.0", "numpy", "pyyaml")
          .add_local_file(str(_LOCAL_CFG), "/root/configs/models.yaml")
          .add_local_python_source("src"))
 app = modal.App("emfl-gemma", image=image)
@@ -63,7 +64,7 @@ def smoke():
 from src.llm.hf_backend import EMB_MODEL, EMB_REV  # noqa: E402
 # The module reads configs/models.yaml at import, so every image must ship it (Embedder crash-looped without it).
 emb_image = (modal.Image.debian_slim(python_version="3.11")
-             .pip_install("sentence-transformers", "torch==2.8.0", "pyyaml")
+             .pip_install("sentence-transformers==6.3.0", "torch==2.8.0", "pyyaml")
              .add_local_file(str(_LOCAL_CFG), "/root/configs/models.yaml")
              .add_local_python_source("src"))
 

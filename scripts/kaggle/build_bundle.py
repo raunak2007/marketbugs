@@ -24,6 +24,12 @@ def main(out, user):
         assert all(x["split"] == "dev" for x in rows), r
         shutil.copy(ROOT / f"data/marketbugs/dev/{r}.jsonl", out / "data/marketbugs/dev")
         shutil.copytree(ROOT / "data/marketbugs/repos" / r, out / "data/marketbugs/repos" / r, ignore=SKIP)
+    import yaml  # pinned tokenizer.json only (the path src.llm.tokens reads); copying the HF cache dir triplicates it
+    pa = yaml.safe_load((ROOT / "configs/models.yaml").read_text())["probability_agent"]
+    org, name = pa["hf_id"].split("/")
+    rel = Path("artifacts/tok") / f"models--{org}--{name}" / "snapshots" / pa["revision"] / "tokenizer.json"
+    (out / rel).parent.mkdir(parents=True)
+    shutil.copyfile(ROOT / rel, out / rel)
     src = ROOT / "artifacts/runs/dev120/test_informed"
     dst = out / "artifacts/runs/dev120/test_informed"
     dst.mkdir(parents=True)

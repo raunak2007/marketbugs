@@ -12,6 +12,7 @@ instance at a time (crash-safe; rerunning the same tag resumes, skipping finishe
 src.analysis.attach_gold. Refuses non-dev instances (no test outcomes before the G2 freeze).
 """
 import json, sys, time, threading, _thread
+from datetime import datetime, timezone
 from pathlib import Path
 import numpy as np
 from src.agents.pipeline import run_instance
@@ -26,18 +27,58 @@ ART = ROOT / "artifacts"
 # Hard budget guard (human cap 2026-11-10). Conservative: bill BOTH GPUs (A10G + T4 embedder) for the whole wall
 # time, +15% for Modal CPU/memory, and keep a reserve for one hung call / scaledown.
 T4_USD_PER_S = 0.59 / 3600
+XL_USD_PER_S = 2.00 / 3600  # L40S, rounded up; billed per XL call wall + cold start + 120 s scaledown
 BURN_USD_PER_S = (GPU_USD_PER_S + T4_USD_PER_S) * 1.15
 RESERVE_USD = 1.0  # lowered from 2.0: conservative estimate matched Modal billing ($3.39 est vs $3.35 billed)
 STALL_S = 15 * 60
 KINDS = ("candidates_inf", "notes", "values_inf", "k10", "telemetry", "raw_notes")
 
 
+XL_GPU = "L40S"  # 48 GB: notes prompts of ~17k tokens OOM on A10G in the sliding-window mask build (G2)
+XL_LOG = ART / "xl_fallback.jsonl"
+
+
 class _Srv:
+    """All value calls (label_logits) run on the configured A10G. generate() is greedy and per-prompt independent
+    (hf_backend loops over prompts), so a batch that OOMs is re-run prompt by prompt on A10G and only the prompts
+    that still OOM go to an XL_GPU container; every such prompt is logged to artifacts/xl_fallback.jsonl."""
+
     def __init__(self):
         import modal
-        G = modal.Cls.from_name("emfl-gemma", "Gemma")()
+        C = modal.Cls.from_name("emfl-gemma", "Gemma")
+        G = C()
+        self._C, self._xl, self.xl_s = C, None, 0.0
         self.label_logits = lambda p, n: G.label_logits.remote(p, n)
-        self.generate = lambda p, **kw: G.generate.remote(p, **kw)
+        self._gen = lambda p, **kw: G.generate.remote(p, **kw)
+
+    @staticmethod
+    def _is_oom(e):
+        return "OutOfMemoryError" in f"{type(e).__name__}: {e}"
+
+    def generate(self, prompts, **kw):
+        try:
+            return self._gen(prompts, **kw)
+        except Exception as e:
+            if not self._is_oom(e):
+                raise
+        out = []
+        for p in prompts:
+            try:
+                out += self._gen([p], **kw)
+            except Exception as e:
+                if not self._is_oom(e):
+                    raise
+                if self._xl is None:
+                    self._xl = self._C.with_options(gpu=XL_GPU)()
+                t0 = time.time()
+                r = self._xl.generate.remote([p], **kw)
+                self.xl_s += (time.time() - t0) + 120  # + scaledown window (cold start is inside the call wall)
+                with open(XL_LOG, "a") as f:
+                    f.write(json.dumps({"ts": datetime.now(timezone.utc).isoformat(), "prompt_hash": sha(p),
+                                        "gpu": XL_GPU, "input_tokens": r[0]["input_tokens"]}) + "\n")
+                print(f"XL fallback: {r[0]['input_tokens']}-token notes prompt ran on {XL_GPU}", flush=True)
+                out += r
+        return out
 
 
 def precompute_embeddings(rows, conds, emb):
@@ -113,7 +154,7 @@ def run(path, tag, n, conds, emb, srv, max_usd, extras=True, protocol="single", 
     todo = [(inst, c) for c in conds for inst in rows]
     precompute_embeddings(rows, conds, emb)
     t4_s = (time.time() - t_start) + 120  # embedder active during precompute + its 120 s scaledown window
-    spend = lambda: (time.time() - t_start) * rates[0] * 1.15 + t4_s * rates[1] * 1.15
+    spend = lambda: ((time.time() - t_start) * rates[0] + t4_s * rates[1] + getattr(srv, "xl_s", 0.0) * XL_USD_PER_S) * 1.15
     try:
         for inst, cond in todo:
             d = ART / "runs" / tag / cond; d.mkdir(parents=True, exist_ok=True)
@@ -145,9 +186,9 @@ def run(path, tag, n, conds, emb, srv, max_usd, extras=True, protocol="single", 
         state["end"] = True
         wall = time.time() - t_start
         with open(ART / "costs.jsonl", "a") as f:
-            f.write(json.dumps({"job": f"run {tag}", "backend": backend, "conds": conds, "protocol": protocol, "n": done, "wall_s": wall,
+            f.write(json.dumps({"job": f"run {tag}", "ts": datetime.now(timezone.utc).isoformat(), "backend": backend, "conds": conds, "protocol": protocol, "n": done, "wall_s": wall,
                                 "est_usd": wall * rates[0],
-                                "conservative_usd": spend() if "spend" in dir() else wall * (rates[0] + rates[1]) * 1.15,
+                                "conservative_usd": max(spend() if "spend" in dir() else 0.0, wall * (rates[0] + rates[1]) * 1.15),
                                 "stopped": stopped}) + "\n")
         print(f"run {tag}: {done} instance-conditions, wall {wall:.0f}s, conservative ${wall * BURN_USD_PER_S:.2f}")
 
@@ -156,26 +197,30 @@ def _arg(name, default):
     return sys.argv[sys.argv.index(name) + 1] if name in sys.argv else default
 
 
-def _local_backend(dtype):
+def _local_backend(dtype, device_map=None):
     """In-process Gemma + embedder (same pinned models/revisions as the Modal images)."""
     import yaml
     from src.llm.hf_backend import HFGemma, EMB_MODEL, EMB_REV
     from sentence_transformers import SentenceTransformer
     pa = yaml.safe_load((ROOT / "configs/models.yaml").read_text())["probability_agent"]
-    g = HFGemma(pa["hf_id"], pa["revision"], dtype=dtype or pa.get("dtype", "bfloat16"))
+    g = HFGemma(pa["hf_id"], pa["revision"], dtype=dtype or pa.get("dtype", "bfloat16"), device_map=device_map)
     print("backend info:", json.dumps({k: v for k, v in g.info().items() if k != "mapping"}), flush=True)
     m = SentenceTransformer(EMB_MODEL, revision=EMB_REV, device="cuda")
     embed = lambda texts: m.encode(texts, batch_size=64, normalize_embeddings=True).tolist()
     return g, embed
 
 
-def make_backend(backend, dtype=None, max_usd=10.79):
-    """-> (srv, emb, rates, max_usd). emb caches by text hash so precomputed embeddings are reused."""
+def make_backend(backend, dtype=None, max_usd=10.79, device_map=None, workspace=None, workspace_cap_usd=None):
+    """-> (srv, emb, rates, max_usd). emb caches by text hash so precomputed embeddings are reused.
+    Modal runs must name the expected workspace + its monthly cap (src.llm.modal_guard); max_usd is lowered to what
+    is left under that cap."""
     if backend == "local":
-        srv, embed_fn = _local_backend(dtype)
+        srv, embed_fn = _local_backend(dtype, device_map)
         rates, max_usd = (0.0, 0.0), float("inf")
     elif backend == "modal":
         import modal
+        from src.llm.modal_guard import remaining_budget
+        max_usd = min(max_usd, remaining_budget(workspace, workspace_cap_usd))
         E = modal.Cls.from_name("emfl-gemma", "Embedder")()
         srv, embed_fn = _Srv(), E.embed.remote
         rates = (GPU_USD_PER_S, T4_USD_PER_S)
@@ -194,7 +239,11 @@ def make_backend(backend, dtype=None, max_usd=10.79):
 
 if __name__ == "__main__":
     backend = _arg("--backend", "modal")
-    srv, emb, rates, max_usd = make_backend(backend, _arg("--dtype", None), float(_arg("--max-usd", 10.79)))
+    ws, wcap = _arg("--workspace", None), _arg("--workspace-cap-usd", None)
+    srv, emb, rates, max_usd = make_backend(backend, _arg("--dtype", None), float(_arg("--max-usd", 10.79)),
+                                           _arg("--device-map", None), ws, float(wcap) if wcap else None)
+    if backend == "modal":
+        backend = f"modal:{ws}"  # ledger key for src.llm.modal_guard
     c = _arg("--cond", "test_informed")
     mh = _arg("--max-hours", None)
     run(sys.argv[1], _arg("--tag", Path(sys.argv[1]).stem), int(_arg("--n", 30)),

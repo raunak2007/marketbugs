@@ -8,7 +8,9 @@ EMB_MODEL, EMB_REV = "BAAI/bge-small-en-v1.5", "5c38ec7c405ec4b44b94cc5a9bb96e73
 
 
 class HFGemma:
-    def __init__(self, model_id, revision, cache_dir=None, dtype="bfloat16", device="cuda"):
+    def __init__(self, model_id, revision, cache_dir=None, dtype="bfloat16", device="cuda", device_map=None):
+        # device_map="auto" splits layers over several GPUs (Kaggle T4 x2: 16 GB of bf16 weights > one 15 GB T4).
+        # Inputs still go to `device` (cuda:0, where accelerate puts the embeddings).
         import torch, transformers
         from transformers import AutoTokenizer, AutoModelForCausalLM
         from src.llm.extraction import resolve_labels, token_mapping_hash
@@ -18,7 +20,7 @@ class HFGemma:
         self.tok.padding_side = "left"
         self.model = AutoModelForCausalLM.from_pretrained(
             model_id, revision=revision, cache_dir=cache_dir,
-            dtype=getattr(torch, dtype), device_map=device).eval()
+            dtype=getattr(torch, dtype), device_map=device_map or device).eval()
         enc = lambda s: self.tok.encode(s, add_special_tokens=False)
         mapping = resolve_labels(enc, 20)
         self.mhash = token_mapping_hash(mapping, model_id, revision)
@@ -89,7 +91,16 @@ class HFGemma:
             if temperature > 0:
                 kw["temperature"] = temperature
             with torch.no_grad():
-                g = self.model.generate(**enc, **kw)
+                try:
+                    g = self.model.generate(**enc, **kw)
+                except torch.OutOfMemoryError:
+                    # Long prompts can OOM from allocator fragmentation after big label_logits batches (G2,
+                    # mb-cachetools-0034: needed 2.14 GiB, 1.93 free + 1.48 reserved-unused). Free the cache and retry
+                    # once; greedy decoding makes the retry output identical. Sampling would shift the RNG: re-raise.
+                    if temperature > 0:
+                        raise
+                    torch.cuda.empty_cache()
+                    g = self.model.generate(**enc, **kw)
             new = g[0, enc["input_ids"].shape[1]:]
             out.append({"text": self.tok.decode(new, skip_special_tokens=True),
                         "input_tokens": int(enc["input_ids"].shape[1]), "output_tokens": int(len(new)),

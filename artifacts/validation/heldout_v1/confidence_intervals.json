@@ -1,0 +1,108 @@
+{
+ "seed": 20261110,
+ "replicates": 10000,
+ "method": "two-stage repository-cluster percentile bootstrap",
+ "contrasts": {
+  "primary": {
+   "contrast": "P_hedge - B_full5 (Top-1)",
+   "label": "confirmatory (preregistered)",
+   "observed": -0.009523809523809525,
+   "n": 210,
+   "n_repos": 7,
+   "cluster_ci95": [
+    -0.04285714285714286,
+    0.02857142857142857
+   ],
+   "verdict": "inconclusive (CI spans 0)",
+   "instance_ci95_diagnostic_only": [
+    -0.0380952380952381,
+    0.014285714285714285
+   ],
+   "per_repo": {
+    "attrs": {
+     "n": 30,
+     "diff": 0.0
+    },
+    "boltons": {
+     "n": 30,
+     "diff": -0.03333333333333333
+    },
+    "dateutil": {
+     "n": 30,
+     "diff": -0.03333333333333333
+    },
+    "isodate": {
+     "n": 30,
+     "diff": 0.0
+    },
+    "more-itertools": {
+     "n": 30,
+     "diff": -0.03333333333333333
+    },
+    "tomli": {
+     "n": 30,
+     "diff": 0.06666666666666667
+    },
+    "toolz": {
+     "n": 30,
+     "diff": -0.03333333333333333
+    }
+   },
+   "wins": 3,
+   "losses": 5,
+   "ties": 202
+  },
+  "real_vs_no_notes": {
+   "contrast": "p_full - p_empty (Top-1)",
+   "label": "exploratory",
+   "observed": 0.023809523809523808,
+   "n": 210,
+   "n_repos": 7,
+   "cluster_ci95": [
+    -0.03333333333333333,
+    0.08095238095238096
+   ],
+   "verdict": "inconclusive (CI spans 0); exploratory",
+   "instance_ci95_diagnostic_only": [
+    -0.014285714285714285,
+    0.06190476190476191
+   ],
+   "per_repo": {
+    "attrs": {
+     "n": 30,
+     "diff": -0.06666666666666667
+    },
+    "boltons": {
+     "n": 30,
+     "diff": 0.1
+    },
+    "dateutil": {
+     "n": 30,
+     "diff": 0.0
+    },
+    "isodate": {
+     "n": 30,
+     "diff": 0.06666666666666667
+    },
+    "more-itertools": {
+     "n": 30,
+     "diff": 0.0
+    },
+    "tomli": {
+     "n": 30,
+     "diff": -0.03333333333333333
+    },
+    "toolz": {
+     "n": 30,
+     "diff": 0.1
+    }
+   },
+   "wins": 11,
+   "losses": 6,
+   "ties": 193
+  },
+  "real_vs_placebo": {
+   "omitted": "column diff.real_vs_placebo not present"
+  }
+ }
+}

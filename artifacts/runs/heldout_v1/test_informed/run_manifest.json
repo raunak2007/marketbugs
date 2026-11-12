@@ -1,0 +1,26 @@
+{
+ "arms": [
+  "real"
+ ],
+ "backend": "modal",
+ "created_utc": "2026-11-12T20:23:33Z",
+ "dtype": "bfloat16",
+ "extras": false,
+ "frozen_code_commit": "bda071662d1aea379990ddd0b170a2459b39169b",
+ "frozen_params_sha256": "75709ef4033eb7f61c286add873faef2ac638161aca3d8ccb3ac6a7e94dd8959",
+ "head_at_start": "a9e784f73605e2f5845604ae5b489197b6fc4f29",
+ "input_ids_sha256": "d689238d9a0701aae6287734b77394ba6a73c9801b946aef3c07c280e7996871",
+ "masks": [
+  0,
+  1,
+  2,
+  4,
+  8,
+  16,
+  31
+ ],
+ "mode_s": false,
+ "placebo_assignment_sha256": "610a16a20bf0e1e242e3aad37a6c20abc3999151b0dd4830e1d6ed560c2a8f86",
+ "placebo_seed": 20261111,
+ "protocol": "avg2"
+}

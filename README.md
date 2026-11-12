@@ -125,6 +125,16 @@ It changes exactly 2 dev instances (runaway doctest output: 29k and 4.8M tokens)
 byte-identical. Details, OOM handling and run provenance (all rows on Modal A10G) are in `BLOCKERS.md`.
 Cost of G2 collection ≈ $8.5 conservative, covered by free Modal credit.
 
+### G3 held-out result (done 2026-11-12): 210 test bugs, 7 unseen repos, frozen protocol
+| | P_hedge (learned supervised pool) | B_full5 (matched full-evidence baseline) |
+|---|---|---|
+| Top-1, all 210 | **134 (63.8%)** | **136 (64.8%)** |
+| Top-1, gold in pool (172) | 77.9% | 79.1% |
+
+**Preregistered paired difference P_hedge − B_full5: −0.95 points, 95% repository-cluster bootstrap CI [−4.3, +2.9]
+(10,000 replicates, seed 20261110): inconclusive.** The methods agree on 202/210 bugs (W/L/T 3/5/202). Pool recall
+172/210 (81.9%). Exploratory: notes vs no notes +2.4 points, CI [−3.3, +8.1]; the dev calibration advantage of pooling
+reversed on test. Full results: `artifacts/validation/heldout_v1/RESULTS.md`; paper: `paper/MARKETBUGS_PAPER.md`.
+
 ### Next
-- G3: held-out test inference under `configs/FROZEN.txt` (wire workspace + cap into `src.agents.run_test` first).
-- B3 Ochiai on the dev split; spot-check the highest-overlap notes.
+- B3 Ochiai on the dev/test splits; spot-check the highest-overlap notes.

@@ -1,0 +1,20 @@
+[{"stream_name":"stdout","time":0.754462439,"data":"+ nvidia-smi -L\n"}
+,{"stream_name":"stderr","time":0.760128897,"data":"/bin/sh: 1: nvidia-smi: not found\n"}
+,{"stream_name":"stderr","time":0.764298878,"data":"Traceback (most recent call last):\n"}
+,{"stream_name":"stderr","time":0.766104027,"data":"  File \"/kaggle/src/script.py\", line 35, in \u003cmodule\u003e\n"}
+,{"stream_name":"stderr","time":0.766131858,"data":"    sh(\"nvidia-smi -L\")\n"}
+,{"stream_name":"stderr","time":0.766136698,"data":"    ~~^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":0.766140248,"data":"  File \"/kaggle/src/script.py\", line 17, in \u003clambda\u003e\n"}
+,{"stream_name":"stderr","time":0.766143828,"data":"    sh = lambda c: (print(\"+\", c, flush=True), subprocess.run(c, shell=True, check=True))\n"}
+,{"stream_name":"stderr","time":0.766147488,"data":"                                               ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":0.766150918,"data":"  File \"/usr/lib/python3.13/subprocess.py\", line 578, in run\n"}
+,{"stream_name":"stderr","time":0.766154608,"data":"    raise CalledProcessError(retcode, process.args,\n"}
+,{"stream_name":"stderr","time":0.766157868,"data":"                             output=stdout, stderr=stderr)\n"}
+,{"stream_name":"stderr","time":0.766161238,"data":"subprocess.CalledProcessError: Command 'nvidia-smi -L' returned non-zero exit status 127.\n"}
+,{"stream_name":"stderr","time":3.25075791,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":3.25080326,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":3.657948106,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":3.657984236,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":5.470787547,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":6.639607934,"data":"[NbConvertApp] Writing 294183 bytes to __results__.html\n"}
+]

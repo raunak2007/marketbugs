@@ -1,0 +1,65 @@
+[{"stream_name":"stdout","time":43.341914954,"data":"+ pip install -q --no-index --find-links /kaggle/input/emfl-offline-deps/wheels 'transformers==5.22.2' 'sentence-transformers==6.3.0' 'accelerate==1.15.0' rank-bm25 jsonschema pyyaml\n"}
+,{"stream_name":"stdout","time":230.655319734,"data":"WEIGHTS {\"weights_path\": \"/kaggle/input/models/google/gemma-4/transformers/gemma-4-e4b-it/1/model.safetensors\", \"expected_sha256\": \"cfbd3d2f1cd71bd471c37fe2bf8546d5028d41e5736f64e1ca6c6b8893125503\", \"got_sha256\": \"cfbd3d2f1cd71bd471c37fe2bf8546d5028d41e5736f64e1ca6c6b8893125503\", \"size\": 15992595884, \"hash_s\": 151.2, \"match\": true}\n"}
+,{"stream_name":"stdout","time":311.157645991,"data":"ENV {\"torch\": \"2.11.0+cpu\", \"cuda\": null, \"transformers\": \"5.22.2\", \"gpus\": [], \"bf16_supported\": false}\n"}
+,{"stream_name":"stdout","time":311.157877256,"data":"+ /usr/bin/python3 -m pip freeze \u003e /kaggle/working/pip_freeze.txt\n"}
+,{"stream_name":"stderr","time":347.033737598,"data":"\rLoading weights:   0%|          | 0/2076 [00:00\u003c?, ?it/s]\rLoading weights:   8%|▊         | 168/2076 [00:00\u003c00:01, 1581.45it/s]\rLoading weights:  16%|█▌        | 327/2076 [00:00\u003c00:01, 940.07it/s] \rLoading weights:  21%|██        | 435/2076 [00:00\u003c00:01, 863.18it/s]\rLoading weights:  25%|██▌       | 528/2076 [00:00\u003c00:01, 815.65it/s]\rLoading weights:  30%|██▉       | 613/2076 [00:00\u003c00:01, 789.27it/s]\rLoading weights:  33%|███▎      | 694/2076 [00:00\u003c00:01, 785.42it/s]\rLoading weights:  38%|███▊      | 791/2076 [00:00\u003c00:01, 835.84it/s]\rLoading weights:  48%|████▊     | 997/2076 [00:01\u003c00:00, 1184.46it/s]\rLoading weights:  57%|█████▋    | 1193/2076 [00:01\u003c00:00, 1407.65it/s]\rLoading weights:  67%|██████▋   | 1397/2076 [00:01\u003c00:00, 1585.89it/s]\rLoading weights:  78%|███████▊  | 1611/2076 [00:01\u003c00:00, 1748.53it/s]\rLoading weights:  89%|████████▊ | 1838/2076 [00:01\u003c00:00, 1900.18it/s]\rLoading weights:  99%|█████████▉| 2058/2076 [00:01\u003c00:00, 1987.34it/s]\rLoading weights: 100%|██████████| 2076/2076 [00:01\u003c00:00, 1358.06it/s]\n"}
+,{"stream_name":"stderr","time":347.19694926,"data":"Traceback (most recent call last):\n"}
+,{"stream_name":"stderr","time":347.198503447,"data":"  File \"\u003cfrozen runpy\u003e\", line 203, in _run_module_as_main\n"}
+,{"stream_name":"stderr","time":347.198532064,"data":"  File \"\u003cfrozen runpy\u003e\", line 88, in _run_code\n"}
+,{"stream_name":"stderr","time":347.198538994,"data":"  File \"/tmp/project/src/agents/pilot.py\", line 197, in \u003cmodule\u003e\n"}
+,{"stream_name":"stderr","time":347.198546731,"data":"    srv, emb, rates, max_usd = make_backend(backend, _arg(\"--dtype\", None), float(_arg(\"--max-usd\", 10.79)),\n"}
+,{"stream_name":"stderr","time":347.198552887,"data":"                               ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":347.198560558,"data":"                                           _arg(\"--device-map\", None))\n"}
+,{"stream_name":"stderr","time":347.19856587,"data":"                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":347.198586888,"data":"  File \"/tmp/project/src/agents/pilot.py\", line 175, in make_backend\n"}
+,{"stream_name":"stderr","time":347.198593752,"data":"    srv, embed_fn = _local_backend(dtype, device_map)\n"}
+,{"stream_name":"stderr","time":347.198599179,"data":"                    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":347.198612299,"data":"  File \"/tmp/project/src/agents/pilot.py\", line 165, in _local_backend\n"}
+,{"stream_name":"stderr","time":347.198617956,"data":"    g = HFGemma(pa[\"hf_id\"], pa[\"revision\"], dtype=dtype or pa.get(\"dtype\", \"bfloat16\"), device_map=device_map)\n"}
+,{"stream_name":"stderr","time":347.198795436,"data":"  File \"/tmp/project/src/llm/hf_backend.py\", line 29, in __init__\n"}
+,{"stream_name":"stderr","time":347.198807073,"data":"    \"dtype\": dtype, \"device_name\": torch.cuda.get_device_name(0) if device == \"cuda\" else device}\n"}
+,{"stream_name":"stderr","time":347.198812793,"data":"                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^\n"}
+,{"stream_name":"stderr","time":347.198817127,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/cuda/__init__.py\", line 653, in get_device_name\n"}
+,{"stream_name":"stderr","time":347.198821771,"data":"    return get_device_properties(device).name\n"}
+,{"stream_name":"stderr","time":347.198825836,"data":"           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^\n"}
+,{"stream_name":"stderr","time":347.198866794,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/cuda/__init__.py\", line 686, in get_device_properties\n"}
+,{"stream_name":"stderr","time":347.19887258,"data":"    _lazy_init()  # will define _get_device_properties\n"}
+,{"stream_name":"stderr","time":347.198877227,"data":"    ~~~~~~~~~~^^\n"}
+,{"stream_name":"stderr","time":347.198917701,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/cuda/__init__.py\", line 471, in _lazy_init\n"}
+,{"stream_name":"stderr","time":347.198926179,"data":"    raise AssertionError(\"Torch not compiled with CUDA enabled\")\n"}
+,{"stream_name":"stderr","time":347.198983063,"data":"AssertionError: Torch not compiled with CUDA enabled\n"}
+,{"stream_name":"stdout","time":349.531045277,"data":"JOB kg_bf16 exit 1\n"}
+,{"stream_name":"stderr","time":366.584120287,"data":"\rLoading weights:   0%|          | 0/2076 [00:00\u003c?, ?it/s]\rLoading weights:  12%|█▏        | 243/2076 [00:00\u003c00:00, 2412.31it/s]\rLoading weights:  23%|██▎       | 485/2076 [00:00\u003c00:00, 2161.49it/s]\rLoading weights:  34%|███▍      | 703/2076 [00:00\u003c00:00, 2037.04it/s]\rLoading weights:  44%|████▎     | 908/2076 [00:00\u003c00:00, 1917.31it/s]\rLoading weights:  53%|█████▎    | 1101/2076 [00:00\u003c00:00, 1884.98it/s]\rLoading weights:  62%|██████▏   | 1290/2076 [00:00\u003c00:00, 1722.21it/s]\rLoading weights:  71%|███████   | 1474/2076 [00:00\u003c00:00, 1749.98it/s]\rLoading weights:  81%|████████  | 1682/2076 [00:00\u003c00:00, 1845.06it/s]\rLoading weights:  90%|█████████ | 1869/2076 [00:00\u003c00:00, 1831.41it/s]\rLoading weights:  99%|█████████▉| 2054/2076 [00:01\u003c00:00, 1827.91it/s]\rLoading weights: 100%|██████████| 2076/2076 [00:01\u003c00:00, 1877.51it/s]\n"}
+,{"stream_name":"stderr","time":366.675863675,"data":"Traceback (most recent call last):\n"}
+,{"stream_name":"stderr","time":366.677553199,"data":"  File \"\u003cfrozen runpy\u003e\", line 203, in _run_module_as_main\n"}
+,{"stream_name":"stderr","time":366.677584291,"data":"  File \"\u003cfrozen runpy\u003e\", line 88, in _run_code\n"}
+,{"stream_name":"stderr","time":366.677736885,"data":"  File \"/tmp/project/src/agents/pilot.py\", line 197, in \u003cmodule\u003e\n"}
+,{"stream_name":"stderr","time":366.677745114,"data":"    srv, emb, rates, max_usd = make_backend(backend, _arg(\"--dtype\", None), float(_arg(\"--max-usd\", 10.79)),\n"}
+,{"stream_name":"stderr","time":366.677750044,"data":"                               ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":366.677754542,"data":"                                           _arg(\"--device-map\", None))\n"}
+,{"stream_name":"stderr","time":366.677759017,"data":"                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":366.677783167,"data":"  File \"/tmp/project/src/agents/pilot.py\", line 175, in make_backend\n"}
+,{"stream_name":"stderr","time":366.67778879,"data":"    srv, embed_fn = _local_backend(dtype, device_map)\n"}
+,{"stream_name":"stderr","time":366.677793544,"data":"                    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":366.677807274,"data":"  File \"/tmp/project/src/agents/pilot.py\", line 165, in _local_backend\n"}
+,{"stream_name":"stderr","time":366.677811963,"data":"    g = HFGemma(pa[\"hf_id\"], pa[\"revision\"], dtype=dtype or pa.get(\"dtype\", \"bfloat16\"), device_map=device_map)\n"}
+,{"stream_name":"stderr","time":366.677868851,"data":"  File \"/tmp/project/src/llm/hf_backend.py\", line 29, in __init__\n"}
+,{"stream_name":"stderr","time":366.677875707,"data":"    \"dtype\": dtype, \"device_name\": torch.cuda.get_device_name(0) if device == \"cuda\" else device}\n"}
+,{"stream_name":"stderr","time":366.677881401,"data":"                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^\n"}
+,{"stream_name":"stderr","time":366.677955306,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/cuda/__init__.py\", line 653, in get_device_name\n"}
+,{"stream_name":"stderr","time":366.677965288,"data":"    return get_device_properties(device).name\n"}
+,{"stream_name":"stderr","time":366.677970116,"data":"           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^\n"}
+,{"stream_name":"stderr","time":366.678008382,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/cuda/__init__.py\", line 686, in get_device_properties\n"}
+,{"stream_name":"stderr","time":366.678013991,"data":"    _lazy_init()  # will define _get_device_properties\n"}
+,{"stream_name":"stderr","time":366.678018116,"data":"    ~~~~~~~~~~^^\n"}
+,{"stream_name":"stderr","time":366.678131357,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/cuda/__init__.py\", line 471, in _lazy_init\n"}
+,{"stream_name":"stderr","time":366.678150802,"data":"    raise AssertionError(\"Torch not compiled with CUDA enabled\")\n"}
+,{"stream_name":"stderr","time":366.678195957,"data":"AssertionError: Torch not compiled with CUDA enabled\n"}
+,{"stream_name":"stdout","time":368.673930291,"data":"JOB kg_g2timing exit 1\n"}
+,{"stream_name":"stderr","time":372.377402319,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":372.377456319,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":372.788729287,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":372.788772787,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":373.824251114,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":375.424862148,"data":"[NbConvertApp] Writing 293910 bytes to __results__.html\n"}
+]

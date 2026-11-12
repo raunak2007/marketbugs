@@ -1,0 +1,6 @@
+transformers==5.22.2
+sentence-transformers==6.3.0
+accelerate==1.15.0
+rank-bm25
+jsonschema
+pyyaml

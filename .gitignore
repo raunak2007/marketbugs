@@ -10,3 +10,7 @@ data/swebench_lite/raw/
 artifacts/scratch_*
 artifacts/pilot_dev30.log
 artifacts/eod_push.err
+
+# Kaggle offline bundle: binaries are rebuilt by scripts/kaggle/build_offline.py (pinned); keep manifest + locks
+artifacts/kaggle/offline/wheels/
+artifacts/kaggle/offline/hf/

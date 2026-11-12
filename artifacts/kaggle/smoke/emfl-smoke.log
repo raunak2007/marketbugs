@@ -1,0 +1,26 @@
+[{"stream_name":"stdout","time":1.230565719,"data":"+ pip install -q 'transformers==5.22.2' sentence-transformers rank-bm25 jsonschema\n"}
+,{"stream_name":"stderr","time":34.729790123,"data":"WARNING: Retrying (Retry(total=4, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NameResolutionError(\"HTTPSConnection(host='pypi.org', port=443): Failed to resolve 'pypi.org' ([Errno -3] Temporary failure in name resolution)\")': /simple/transformers/\n"}
+,{"stream_name":"stderr","time":67.242777119,"data":"WARNING: Retrying (Retry(total=3, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NameResolutionError(\"HTTPSConnection(host='pypi.org', port=443): Failed to resolve 'pypi.org' ([Errno -3] Temporary failure in name resolution)\")': /simple/transformers/\n"}
+,{"stream_name":"stderr","time":100.256963178,"data":"WARNING: Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NameResolutionError(\"HTTPSConnection(host='pypi.org', port=443): Failed to resolve 'pypi.org' ([Errno -3] Temporary failure in name resolution)\")': /simple/transformers/\n"}
+,{"stream_name":"stderr","time":134.269526449,"data":"WARNING: Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NameResolutionError(\"HTTPSConnection(host='pypi.org', port=443): Failed to resolve 'pypi.org' ([Errno -3] Temporary failure in name resolution)\")': /simple/transformers/\n"}
+,{"stream_name":"stderr","time":170.283192943,"data":"WARNING: Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NameResolutionError(\"HTTPSConnection(host='pypi.org', port=443): Failed to resolve 'pypi.org' ([Errno -3] Temporary failure in name resolution)\")': /simple/transformers/\n"}
+,{"stream_name":"stderr","time":202.307163518,"data":"ERROR: Could not find a version that satisfies the requirement transformers==5.22.2 (from versions: none)\n"}
+,{"stream_name":"stderr","time":202.307579044,"data":"ERROR: No matching distribution found for transformers==5.22.2\n"}
+,{"stream_name":"stderr","time":202.422944849,"data":"Traceback (most recent call last):\n"}
+,{"stream_name":"stderr","time":202.423853381,"data":"  File \"/kaggle/src/script.py\", line 11, in \u003cmodule\u003e\n"}
+,{"stream_name":"stderr","time":202.42387838,"data":"    sh(\"pip install -q 'transformers==5.22.2' sentence-transformers rank-bm25 jsonschema\")\n"}
+,{"stream_name":"stderr","time":202.42388491,"data":"    ~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":202.423890633,"data":"  File \"/kaggle/src/script.py\", line 10, in \u003clambda\u003e\n"}
+,{"stream_name":"stderr","time":202.423896428,"data":"    sh = lambda c: (print(\"+\", c, flush=True), subprocess.run(c, shell=True, check=True))\n"}
+,{"stream_name":"stderr","time":202.423901837,"data":"                                               ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":202.423908174,"data":"  File \"/usr/lib/python3.13/subprocess.py\", line 578, in run\n"}
+,{"stream_name":"stderr","time":202.423913716,"data":"    raise CalledProcessError(retcode, process.args,\n"}
+,{"stream_name":"stderr","time":202.423919376,"data":"                             output=stdout, stderr=stderr)\n"}
+,{"stream_name":"stderr","time":202.423924915,"data":"subprocess.CalledProcessError: Command 'pip install -q 'transformers==5.22.2' sentence-transformers rank-bm25 jsonschema' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":205.365260676,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":205.365304093,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":205.885841448,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":205.885865745,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":208.284511023,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":209.688508473,"data":"[NbConvertApp] Writing 282629 bytes to __results__.html\n"}
+]

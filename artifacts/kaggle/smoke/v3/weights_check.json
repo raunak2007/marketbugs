@@ -1,0 +1,1 @@
+{"weights_path": "/kaggle/input/models/google/gemma-4/transformers/gemma-4-e4b-it/1/model.safetensors", "expected_sha256": "cfbd3d2f1cd71bd471c37fe2bf8546d5028d41e5736f64e1ca6c6b8893125503", "got_sha256": "cfbd3d2f1cd71bd471c37fe2bf8546d5028d41e5736f64e1ca6c6b8893125503", "size": 15992595884, "hash_s": 151.2, "match": true}
